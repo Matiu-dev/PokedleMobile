@@ -75,7 +75,7 @@ dependencies {
 //    implementation("io.ktor:ktor-server-netty:3.0.0")
 
     //koin
-    val koin_version = "3.5.0"
+    val koin_version = "4.0.0"
     implementation(project.dependencies.platform("io.insert-koin:koin-bom:$koin_version"))
     implementation("io.insert-koin:koin-core")
     testImplementation("io.insert-koin:koin-test:$koin_version")
