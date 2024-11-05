@@ -72,7 +72,7 @@ dependencies {
 
     //ktor
     implementation("io.ktor:ktor-server-core:3.0.0")
-    implementation("io.ktor:ktor-server-netty:3.0.0")
+//    implementation("io.ktor:ktor-server-netty:3.0.0")
 
     //koin
     val koin_version = "3.5.0"
@@ -80,6 +80,6 @@ dependencies {
     implementation("io.insert-koin:koin-core")
     testImplementation("io.insert-koin:koin-test:$koin_version")
     testImplementation("io.insert-koin:koin-test-junit5:$koin_version")
-//    implementation("io.insert-koin:koin-ktor:$koin_version")
+    implementation("io.insert-koin:koin-ktor:$koin_version")
     implementation("io.insert-koin:koin-logger-slf4j:$koin_version")
 }
