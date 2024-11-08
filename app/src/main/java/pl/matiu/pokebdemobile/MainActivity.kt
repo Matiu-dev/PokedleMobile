@@ -29,6 +29,19 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        val word = "hello"
+
+//        println((0 until word.length).map {
+//            word.get(0..it)
+//            word[it].uppercase()
+//        }
+//        )
+//        val list = listOf("1", "2", "3", "4", "+", "5")
+//        val separator = ","
+//        val string = list.joinToString(separator)
+//        println(string)        //output: 1,2,3,4,+,5
+
         setContent {
             PokebdeMobileTheme {
                 Greeting()

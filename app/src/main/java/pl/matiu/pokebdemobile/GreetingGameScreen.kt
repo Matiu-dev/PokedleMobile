@@ -21,7 +21,7 @@ data class GreetingGameScreen(val modifier: Modifier):  Screen{
         Column(modifier = modifier) {
             Button(
                 modifier = Modifier.fillMaxWidth()
-                    .padding(horizontal = 15.dp),
+                    .padding(10.dp),
                 onClick = {
                     navigator.push(GameScreen(modifier))
                 }

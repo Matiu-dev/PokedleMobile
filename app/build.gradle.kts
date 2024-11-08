@@ -71,8 +71,9 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.7.0")
 
     //ktor
-    implementation("io.ktor:ktor-server-core:3.0.0")
-//    implementation("io.ktor:ktor-server-netty:3.0.0")
+    val ktor_version="3.0.0"
+    implementation("io.ktor:ktor-client-core:$ktor_version")
+    implementation("io.ktor:ktor-client-cio:$ktor_version")
 
     //koin
     val koin_version = "4.0.0"

@@ -1,6 +1,7 @@
 package pl.matiu.pokebdemobile
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,7 +26,8 @@ private const val BankCardAspectRatio = 1.0f
 internal fun Card(
     rotationAngle: Float,
     modifier: Modifier = Modifier,
-    pokemonName: String
+    pokemonName: String,
+    color: Color
 ) {
     val sideModifier =
         modifier
@@ -37,13 +39,13 @@ internal fun Card(
             }
             .clip(shape = RoundedCornerShape(20.dp))
 
-    Box {
+    Box() {
         Box(
             modifier = sideModifier
                 .graphicsLayer {
                     alpha = if (rotationAngle in 90f..180f) 0f else 1f
                 }
-                .background(Color.Transparent),
+                .background(Color.LightGray).border(2.dp, color = Color.Black, shape = RoundedCornerShape(20.dp)),
         )
 
         Box(
@@ -52,14 +54,15 @@ internal fun Card(
                     alpha = if (rotationAngle in 90f..180f) 1f else 0f
                     rotationY = 180f
                 }
-                .background(Color.Green),
+                .background(color)
+                .border(2.dp, color = Color.Black, shape = RoundedCornerShape(20.dp))
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
                 modifier = Modifier.fillMaxSize()
             ) {
-                Text(text = pokemonName, color = Color.White, textAlign = TextAlign.Center)
+                Text(text = pokemonName, color = Color.Black, textAlign = TextAlign.Center)
             }
         }
     }
