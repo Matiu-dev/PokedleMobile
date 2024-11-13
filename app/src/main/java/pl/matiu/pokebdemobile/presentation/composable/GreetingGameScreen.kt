@@ -24,6 +24,7 @@ data class GreetingGameScreen(val modifier: Modifier):  Screen{
                     .padding(10.dp),
                 onClick = {
                     navigator.push(GameScreen(modifier))
+//                    navigator.push(ResultGameScreen(modifier = modifier, numberOfShots = 1))
                 }
             ) {
                 Text("Rozpocznij szukanie")
