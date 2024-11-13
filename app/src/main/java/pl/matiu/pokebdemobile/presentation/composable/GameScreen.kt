@@ -1,5 +1,6 @@
 package pl.matiu.pokebdemobile.presentation.composable
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -68,31 +69,32 @@ data class GameScreen(val modifier: Modifier) : Screen {
                     onClick = {
 //                        if (!isPokemonExist(pokemonName)
 //                        ) {
+                        //TODo sprawdzenie czy dany pokemon istnieje
 
-//                            if(!isPokemonSelected(listOfGuessedPokemon, pokemonName)) {
-//                                listOfGuessedPokemon.add(
-//                                    TemporaryDatabase.pokemonGuessList.asSequence()
-//                                        .filter { it.value.name == pokemonName }.first().value
-//                                )
+                        if (!isPokemonSelected(listOfGuessedPokemon.value, pokemonName)) {
                             pokemonViewModel.getPokemonInfo(pokemonName = pokemonName)
 
-//                                if (pokemonName == TemporaryDatabase.todayPokemon.name) {
-//                                    Toast.makeText(
-//                                        context,
-//                                        "Udało Ci się zgadnąć. Dzisiejszy pokemon to ${pokemonName}.",
-//                                        Toast.LENGTH_SHORT
-//                                    ).show()
-//                                } else {
-//                                    Toast.makeText(
-//                                        context,
-//                                        "Nie trafiłeś tym razem. Spróbuj ponownie.",
-//                                        Toast.LENGTH_SHORT
-//                                    ).show()
-//                                }
-//                            } else {
-//                                Toast.makeText(context, "Sprawdziłeś już tego pokemona.", Toast.LENGTH_SHORT)
-//                                    .show()
-//                            }
+                            if (pokemonName == TemporaryDatabase.todayPokemon.name) {
+                                Toast.makeText(
+                                    context,
+                                    "Udało Ci się zgadnąć. Dzisiejszy pokemon to ${pokemonName}.",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            } else {
+                                Toast.makeText(
+                                    context,
+                                    "Nie trafiłeś tym razem. Spróbuj ponownie.",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        } else {
+                            Toast.makeText(
+                                context,
+                                "Sprawdziłeś już tego pokemona.",
+                                Toast.LENGTH_SHORT
+                            )
+                                .show()
+                        }
 
 
 //                        } else {
@@ -104,14 +106,15 @@ data class GameScreen(val modifier: Modifier) : Screen {
                     },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 10.dp).padding(horizontal = 10.dp)
+                        .padding(top = 10.dp)
+                        .padding(horizontal = 10.dp)
                 ) {
                     Text(text = "Sprawdź")
                 }
             }
 
             LazyColumn(state = state, modifier = Modifier.padding(5.dp)) {
-                if( listOfGuessedPokemon.value != null) {
+                if (listOfGuessedPokemon.value != null) {
                     items(
                         listOfGuessedPokemon.value!!.reversed(), key = { it.hashCode() }
                     ) { pokemonModel ->
@@ -119,7 +122,10 @@ data class GameScreen(val modifier: Modifier) : Screen {
                             HorizontalDivider(
                                 thickness = 2.dp,
                                 color = Color.Black,
-                                modifier = Modifier.padding(horizontal = 15.dp, vertical = 15.dp)
+                                modifier = Modifier.padding(
+                                    horizontal = 15.dp,
+                                    vertical = 15.dp
+                                )
                             )
                         }
 
@@ -141,7 +147,7 @@ fun isPokemonExist(pokemonName: String): Boolean {
 }
 
 fun isPokemonSelected(guessedPokemonList: List<PokemonModel>, pokemonName: String): Boolean {
-    return guessedPokemonList.any{it.name == pokemonName}
+    return guessedPokemonList.any { it.name == pokemonName }
 }
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -157,45 +163,48 @@ fun GenerateAnswers(
         horizontalArrangement = Arrangement.Center
     ) {
 //        items(1) { item ->
-            Column {
-                FlippableCardContainer(
-                    pokemonModel!!.name.toString(),
-                    500,
-                    if (pokemonModel.name == TemporaryDatabase.todayPokemon.name) Color.Green else Color.Red
-                )
-            }
+        Column {
+            FlippableCardContainer(
+                pokemonModel!!.name.toString(),
+                500,
+                if (pokemonModel.name == TemporaryDatabase.todayPokemon.name) Color.Green else Color.Red
+            )
+        }
 
 //            Spacer(modifier = Modifier.padding(5.dp))
 
-            for(type in pokemonModel?.typeList!!) {
+        var typeList = pokemonModel?.typeList!!
 
-                Spacer(modifier = Modifier.padding(5.dp))
 
-                Column {
-                    FlippableCardContainer(
-                        type, 1000,
-                        if (pokemonModel.name == TemporaryDatabase.todayPokemon.name) Color.Green else Color.Red
-                    )
-                }
-            }
+        for (type in typeList) {
 
             Spacer(modifier = Modifier.padding(5.dp))
 
             Column {
                 FlippableCardContainer(
-                    pokemonModel!!.environment!!, 1500,
-                    if (pokemonModel.environment == TemporaryDatabase.todayPokemon.environment) Color.Green else Color.Red
+                    type, 1000,
+                    checkContains(typeList)
                 )
             }
+        }
 
-            Spacer(modifier = Modifier.padding(5.dp))
+        Spacer(modifier = Modifier.padding(5.dp))
 
-            Column {
-                FlippableCardContainer(
-                    pokemonModel!!.color!!, 2000,
-                    if (pokemonModel.color == TemporaryDatabase.todayPokemon.color) Color.Green else Color.Red
-                )
-            }
+        Column {
+            FlippableCardContainer(
+                pokemonModel!!.environment!!, 1500,
+                if (pokemonModel.environment == TemporaryDatabase.todayPokemon.environment) Color.Green else Color.Red
+            )
+        }
+
+        Spacer(modifier = Modifier.padding(5.dp))
+
+        Column {
+            FlippableCardContainer(
+                pokemonModel!!.color!!, 2000,
+                if (pokemonModel.color == TemporaryDatabase.todayPokemon.color) Color.Green else Color.Red
+            )
+        }
 
 //            Spacer(modifier = Modifier.padding(5.dp))
 
@@ -206,23 +215,23 @@ fun GenerateAnswers(
 //                )
 //            }
 
-            Spacer(modifier = Modifier.padding(5.dp))
+        Spacer(modifier = Modifier.padding(5.dp))
 
-            Column {
-                FlippableCardContainer(
-                    pokemonModel!!.averageHeight.toString(), 2500,
-                    if (pokemonModel.averageHeight == TemporaryDatabase.todayPokemon.averageHeight) Color.Green else Color.Red
-                )
-            }
+        Column {
+            FlippableCardContainer(
+                pokemonModel!!.averageHeight.toString(), 2500,
+                if (pokemonModel.averageHeight == TemporaryDatabase.todayPokemon.averageHeight) Color.Green else Color.Red
+            )
+        }
 
-            Spacer(modifier = Modifier.padding(5.dp))
+        Spacer(modifier = Modifier.padding(5.dp))
 
-            Column {
-                FlippableCardContainer(
-                    pokemonModel!!.averageWeight.toString(), 3000,
-                    if (pokemonModel.averageWeight == TemporaryDatabase.todayPokemon.averageWeight) Color.Green else Color.Red
-                )
-            }
+        Column {
+            FlippableCardContainer(
+                pokemonModel!!.averageWeight.toString(), 3000,
+                if (pokemonModel.averageWeight == TemporaryDatabase.todayPokemon.averageWeight) Color.Green else Color.Red
+            )
+        }
 //        }
 
     }
@@ -238,7 +247,8 @@ fun GuessPokemonEditText(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(10.dp).padding(top = 10.dp)
+            .padding(10.dp)
+            .padding(top = 10.dp)
     ) {
         Text(
             text = "wpisz nazwe", modifier = Modifier
@@ -252,4 +262,32 @@ fun GuessPokemonEditText(
             modifier = Modifier.weight(2f)
         )
     }
+}
+
+fun checkContains(typeList: List<String>): Color {
+    var containsAny = false
+    var containsAll = true
+
+
+    for (typeInGuessedPokemon in typeList) {
+        if (typeInGuessedPokemon in TemporaryDatabase.todayPokemon.typeList!!) {
+            containsAny = true
+        } else {
+            containsAll = false
+        }
+    }
+
+    return if (containsAll) {
+        Color.Green
+    } else {
+        if (containsAny) {
+            Color.Yellow
+        } else {
+            Color.Red
+        }
+    }
+}
+
+enum class TypeContains() {
+    All, ANY, NONE
 }

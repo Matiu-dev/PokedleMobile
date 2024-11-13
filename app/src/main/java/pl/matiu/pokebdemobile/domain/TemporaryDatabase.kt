@@ -3,7 +3,7 @@ package pl.matiu.pokebdemobile.domain
 class TemporaryDatabase {
 
     companion object {
-        var todayPokemon = PokemonModel(
+        val todayPokemon = PokemonModel(
             name = "charmander",
             typeList = listOf("fire"),
             environment = "mountain",
