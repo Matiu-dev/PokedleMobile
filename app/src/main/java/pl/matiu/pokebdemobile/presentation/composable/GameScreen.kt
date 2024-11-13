@@ -1,5 +1,6 @@
 package pl.matiu.pokebdemobile.presentation.composable
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,9 +31,14 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import pl.matiu.pokebdemobile.domain.TemporaryDatabase
 import pl.matiu.pokebdemobile.domain.PokemonModel
 import pl.matiu.pokebdemobile.presentation.PokemonViewModel
@@ -51,6 +57,26 @@ data class GameScreen(val modifier: Modifier) : Screen {
 
         val pokemonViewModel: PokemonViewModel = viewModel()
         var listOfGuessedPokemon = pokemonViewModel.pokemonModel.collectAsState()
+
+        var numberOfShots = rememberSaveable { mutableIntStateOf(0) }
+        var endGame = rememberSaveable { mutableStateOf(false) }
+        var showDialog = rememberSaveable { mutableStateOf(false) }
+
+        if(endGame.value) {
+            LaunchedEffect(endGame) {
+                var del = launch {
+                    delay(3500)
+                }
+                del.join()
+                showDialog.value = true
+            }
+        }
+
+        Log.d("show dialog", showDialog.toString())
+        if (showDialog.value) {
+            EndGameDialog(numberOfShots = numberOfShots.intValue, modifier = modifier)
+        }
+
 
         LaunchedEffect(listOfGuessedPokemon) {
             snapshotFlow { state.firstVisibleItemIndex }
@@ -72,6 +98,9 @@ data class GameScreen(val modifier: Modifier) : Screen {
                         //TODo sprawdzenie czy dany pokemon istnieje
 
                         if (!isPokemonSelected(listOfGuessedPokemon.value, pokemonName)) {
+
+                            numberOfShots.intValue += 1
+
                             pokemonViewModel.getPokemonInfo(pokemonName = pokemonName)
 
                             if (pokemonName == TemporaryDatabase.todayPokemon.name) {
@@ -80,6 +109,9 @@ data class GameScreen(val modifier: Modifier) : Screen {
                                     "Udało Ci się zgadnąć. Dzisiejszy pokemon to ${pokemonName}.",
                                     Toast.LENGTH_SHORT
                                 ).show()
+
+                                endGame.value = true
+
                             } else {
                                 Toast.makeText(
                                     context,
@@ -233,7 +265,6 @@ fun GenerateAnswers(
             )
         }
 //        }
-
     }
 }
 

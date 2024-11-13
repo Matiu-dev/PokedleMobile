@@ -12,17 +12,11 @@ import pl.matiu.pokebdemobile.domain.PokemonModel
 class PokemonViewModel: ViewModel() {
 
     private var _pokemonModel = MutableStateFlow<List<PokemonModel>>(emptyList())
-//    private var _pokemonModel = MutableStateFlow<PokemonModel?>(null)
     val pokemonModel: StateFlow<List<PokemonModel>> = _pokemonModel
-
-    init {
-//        getPokemonInfo(pokemonName = "charmander")
-    }
 
     fun getPokemonInfo(pokemonName: String) {
         viewModelScope.launch {
             _pokemonModel.value = _pokemonModel.value.plus(PokemonRepositoryImpl().getPokemonData(pokemonName = pokemonName))
-//            _pokemonModel.value = PokemonRepositoryImpl().getPokemonDataAsString(pokemonName = pokemonName)
         }
     }
 }
