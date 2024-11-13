@@ -1,4 +1,4 @@
-package pl.matiu.pokebdemobile
+package pl.matiu.pokebdemobile.presentation.composable
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth

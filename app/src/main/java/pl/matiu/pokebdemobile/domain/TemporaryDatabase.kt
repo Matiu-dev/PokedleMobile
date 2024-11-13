@@ -7,10 +7,10 @@ class TemporaryDatabase {
             name = "charmander",
             typeList = listOf("fire"),
             environment = "mountain",
-            color = "orange",
-            evolutionStage = 1,
-            averageHeight = 60.0F,
-            averageWeight = 8.5F,
+            color = "red",
+//            evolutionStage = 1,
+            averageHeight = 6,
+            averageWeight = 85,
             isLegendary = false,
             isMythical = false
         )
@@ -21,9 +21,9 @@ class TemporaryDatabase {
                 typeList = listOf("fire"),
                 environment = "mountain",
                 color = "orange",
-                evolutionStage = 1,
-                averageHeight = 60.0F,
-                averageWeight = 8.5F,
+//                evolutionStage = 1,
+                averageHeight = 60,
+                averageWeight = 8,
                 isLegendary = false,
                 isMythical = false
             ),
@@ -32,9 +32,9 @@ class TemporaryDatabase {
                 typeList = listOf("grass", "poison"),
                 environment = "grassland",
                 color = "green",
-                evolutionStage = 1,
-                averageHeight = 70.0F,
-                averageWeight = 6.9F,
+//                evolutionStage = 1,
+                averageHeight = 70,
+                averageWeight = 6,
                 isLegendary = false,
                 isMythical = false
             ),
@@ -43,9 +43,9 @@ class TemporaryDatabase {
                 typeList = listOf("water"),
                 environment = "waters-edge",
                 color = "blue",
-                evolutionStage = 1,
-                averageHeight = 50.0F,
-                averageWeight = 9F,
+//                evolutionStage = 1,
+                averageHeight = 50,
+                averageWeight = 9,
                 isLegendary = false,
                 isMythical = false
             )

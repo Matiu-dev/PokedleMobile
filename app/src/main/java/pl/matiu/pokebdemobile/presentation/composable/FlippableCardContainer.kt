@@ -1,4 +1,4 @@
-package pl.matiu.pokebdemobile
+package pl.matiu.pokebdemobile.presentation.composable
 
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
@@ -37,6 +37,7 @@ internal fun FlippableCardContainer(pokemonName: String, timeToLaunchCard: Long,
 
     Box(
         contentAlignment = Alignment.Center,
+        modifier = Modifier.padding(bottom = 5.dp)
     ) {
         Card(
             modifier = Modifier,

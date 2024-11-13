@@ -1,7 +1,5 @@
-package pl.matiu.pokebdemobile
+package pl.matiu.pokebdemobile.presentation.composable
 
-import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,6 +18,8 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -29,8 +29,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -146,18 +144,19 @@ fun isPokemonSelected(guessedPokemonList: List<PokemonModel>, pokemonName: Strin
     return guessedPokemonList.any{it.name == pokemonName}
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun GenerateAnswers(
     pokemonModel: PokemonModel?
 ) {
 
-    LazyRow(
+    FlowRow(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 5.dp),
         horizontalArrangement = Arrangement.Center
     ) {
-        items(1) { item ->
+//        items(1) { item ->
             Column {
                 FlippableCardContainer(
                     pokemonModel!!.name.toString(),
@@ -166,29 +165,25 @@ fun GenerateAnswers(
                 )
             }
 
-            Spacer(modifier = Modifier.padding(5.dp))
+//            Spacer(modifier = Modifier.padding(5.dp))
 
-            Column {
-                FlippableCardContainer(
-                    pokemonModel!!.typeList!!.get(0), 1000,
-                    if (pokemonModel.name == TemporaryDatabase.todayPokemon.name) Color.Green else Color.Red
-                )
+            for(type in pokemonModel?.typeList!!) {
+
+                Spacer(modifier = Modifier.padding(5.dp))
+
+                Column {
+                    FlippableCardContainer(
+                        type, 1000,
+                        if (pokemonModel.name == TemporaryDatabase.todayPokemon.name) Color.Green else Color.Red
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.padding(5.dp))
 
             Column {
                 FlippableCardContainer(
-                    pokemonModel?.typeList?.get(0) ?: "", 1500,
-                    if (pokemonModel?.typeList == TemporaryDatabase.todayPokemon.typeList) Color.Green else Color.Red
-                )
-            }
-
-            Spacer(modifier = Modifier.padding(5.dp))
-
-            Column {
-                FlippableCardContainer(
-                    pokemonModel!!.environment!!, 2000,
+                    pokemonModel!!.environment!!, 1500,
                     if (pokemonModel.environment == TemporaryDatabase.todayPokemon.environment) Color.Green else Color.Red
                 )
             }
@@ -197,25 +192,25 @@ fun GenerateAnswers(
 
             Column {
                 FlippableCardContainer(
-                    pokemonModel!!.color!!, 2500,
+                    pokemonModel!!.color!!, 2000,
                     if (pokemonModel.color == TemporaryDatabase.todayPokemon.color) Color.Green else Color.Red
                 )
             }
 
+//            Spacer(modifier = Modifier.padding(5.dp))
+
+//            Column {
+//                FlippableCardContainer(
+//                    pokemonModel!!.evolutionStage.toString(), 3000,
+//                    if (pokemonModel.evolutionStage == TemporaryDatabase.todayPokemon.evolutionStage) Color.Green else Color.Red
+//                )
+//            }
+
             Spacer(modifier = Modifier.padding(5.dp))
 
             Column {
                 FlippableCardContainer(
-                    pokemonModel!!.evolutionStage.toString(), 3000,
-                    if (pokemonModel.evolutionStage == TemporaryDatabase.todayPokemon.evolutionStage) Color.Green else Color.Red
-                )
-            }
-
-            Spacer(modifier = Modifier.padding(5.dp))
-
-            Column {
-                FlippableCardContainer(
-                    pokemonModel!!.averageHeight.toString(), 3500,
+                    pokemonModel!!.averageHeight.toString(), 2500,
                     if (pokemonModel.averageHeight == TemporaryDatabase.todayPokemon.averageHeight) Color.Green else Color.Red
                 )
             }
@@ -224,11 +219,11 @@ fun GenerateAnswers(
 
             Column {
                 FlippableCardContainer(
-                    pokemonModel!!.averageWeight.toString(), 4000,
+                    pokemonModel!!.averageWeight.toString(), 3000,
                     if (pokemonModel.averageWeight == TemporaryDatabase.todayPokemon.averageWeight) Color.Green else Color.Red
                 )
             }
-        }
+//        }
 
     }
 }

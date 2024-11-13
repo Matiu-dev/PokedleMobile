@@ -2,19 +2,26 @@ package pl.matiu.pokebdemobile.data
 
 import android.util.Log
 import pl.matiu.pokebdemobile.data.dto.PokemonDto
+import pl.matiu.pokebdemobile.data.dto.PokemonSpeciesDto
 import pl.matiu.pokebdemobile.domain.PokemonModel
 
-fun PokemonDto.toPokemonModel(): PokemonModel {
+fun PokemonSpeciesDto.toPokemonModel(pokemonDataResponse: PokemonModel) {
+    pokemonDataResponse.name = name
+    pokemonDataResponse.color = color.name
+    pokemonDataResponse.environment = habitat.name
+    pokemonDataResponse.isLegendary = isLegendary
+    pokemonDataResponse.isMythical = isMythical
+}
 
-//    Log.d("testsssss", abilities[0].ability.name + " " + abilities[0].ability.url)
+fun PokemonDto.toPokemonModel(pokemonDataResponse: PokemonModel) {
+    var listTypes = mutableListOf<String>()
 
-    return PokemonModel(name = name,
-        typeList = listOf("", ""),
-        color =  color.name,
-        environment = habitat.name,
-        evolutionStage = 1,
-        averageWeight = 1F,
-        averageHeight = 1F,
-        isLegendary = isLegendary,
-        isMythical = isMythical)
+    for(type in types) {
+        listTypes.add(type.type.name)
+        Log.d("types", type.type.name)
+    }
+
+    pokemonDataResponse.typeList = listTypes
+    pokemonDataResponse.averageWeight = weight
+    pokemonDataResponse.averageHeight = height
 }
