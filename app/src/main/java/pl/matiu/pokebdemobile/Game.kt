@@ -1,5 +1,6 @@
 package pl.matiu.pokebdemobile
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,12 +28,15 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import pl.matiu.pokebdemobile.domain.TemporaryDatabase
 import pl.matiu.pokebdemobile.domain.PokemonModel
+import pl.matiu.pokebdemobile.presentation.PokemonViewModel
 
 data class GameScreen(val modifier: Modifier) : Screen {
 
@@ -43,8 +47,11 @@ data class GameScreen(val modifier: Modifier) : Screen {
         val state = rememberLazyListState()
 
         val navigator = LocalNavigator.currentOrThrow
-        val listOfGuessedPokemon = remember { mutableStateListOf<PokemonModel>() }
+//        val listOfGuessedPokemon = remember { mutableStateListOf<PokemonModel>() }
         var pokemonName by rememberSaveable { mutableStateOf("") }
+
+        val pokemonViewModel: PokemonViewModel = viewModel()
+        var listOfGuessedPokemon = pokemonViewModel.pokemonModel.collectAsState()
 
         LaunchedEffect(listOfGuessedPokemon) {
             snapshotFlow { state.firstVisibleItemIndex }
@@ -61,38 +68,39 @@ data class GameScreen(val modifier: Modifier) : Screen {
             Row(modifier = Modifier.fillMaxWidth()) {
                 Button(
                     onClick = {
-                        if (!isPokemonExist(pokemonName)
-                        ) {
+//                        if (!isPokemonExist(pokemonName)
+//                        ) {
 
-                            if(!isPokemonSelected(listOfGuessedPokemon, pokemonName)) {
-                                listOfGuessedPokemon.add(
-                                    TemporaryDatabase.pokemonGuessList.asSequence()
-                                        .filter { it.value.name == pokemonName }.first().value
-                                )
+//                            if(!isPokemonSelected(listOfGuessedPokemon, pokemonName)) {
+//                                listOfGuessedPokemon.add(
+//                                    TemporaryDatabase.pokemonGuessList.asSequence()
+//                                        .filter { it.value.name == pokemonName }.first().value
+//                                )
+                            pokemonViewModel.getPokemonInfo(pokemonName = pokemonName)
 
-                                if (pokemonName == TemporaryDatabase.todayPokemon.name) {
-                                    Toast.makeText(
-                                        context,
-                                        "Udało Ci się zgadnąć. Dzisiejszy pokemon to ${pokemonName}.",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                } else {
-                                    Toast.makeText(
-                                        context,
-                                        "Nie trafiłeś tym razem. Spróbuj ponownie.",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-                            } else {
-                                Toast.makeText(context, "Sprawdziłeś już tego pokemona.", Toast.LENGTH_SHORT)
-                                    .show()
-                            }
+//                                if (pokemonName == TemporaryDatabase.todayPokemon.name) {
+//                                    Toast.makeText(
+//                                        context,
+//                                        "Udało Ci się zgadnąć. Dzisiejszy pokemon to ${pokemonName}.",
+//                                        Toast.LENGTH_SHORT
+//                                    ).show()
+//                                } else {
+//                                    Toast.makeText(
+//                                        context,
+//                                        "Nie trafiłeś tym razem. Spróbuj ponownie.",
+//                                        Toast.LENGTH_SHORT
+//                                    ).show()
+//                                }
+//                            } else {
+//                                Toast.makeText(context, "Sprawdziłeś już tego pokemona.", Toast.LENGTH_SHORT)
+//                                    .show()
+//                            }
 
 
-                        } else {
-                            Toast.makeText(context, "Nie ma takiego pokemona.", Toast.LENGTH_SHORT)
-                                .show()
-                        }
+//                        } else {
+//                            Toast.makeText(context, "Nie ma takiego pokemona.", Toast.LENGTH_SHORT)
+//                                .show()
+//                        }
 
 
                     },
@@ -105,21 +113,24 @@ data class GameScreen(val modifier: Modifier) : Screen {
             }
 
             LazyColumn(state = state, modifier = Modifier.padding(5.dp)) {
-                items(
-                    listOfGuessedPokemon.reversed(), key = { it.hashCode() }
-                ) { pokemonName ->
-                    if (listOfGuessedPokemon.size > 1) {
-                        HorizontalDivider(
-                            thickness = 2.dp,
-                            color = Color.Black,
-                            modifier = Modifier.padding(horizontal = 15.dp, vertical = 15.dp)
+                if( listOfGuessedPokemon.value != null) {
+                    items(
+                        listOfGuessedPokemon.value!!.reversed(), key = { it.hashCode() }
+                    ) { pokemonModel ->
+                        if (listOfGuessedPokemon.value!!.size > 1) {
+                            HorizontalDivider(
+                                thickness = 2.dp,
+                                color = Color.Black,
+                                modifier = Modifier.padding(horizontal = 15.dp, vertical = 15.dp)
+                            )
+                        }
+
+                        GenerateAnswers(
+                            pokemonModel = pokemonModel
                         )
                     }
-
-                    GenerateAnswers(
-                        pokemonModel = pokemonName
-                    )
                 }
+
             }
 
         }

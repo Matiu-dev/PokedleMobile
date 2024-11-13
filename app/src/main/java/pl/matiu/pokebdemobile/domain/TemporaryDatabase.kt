@@ -10,7 +10,9 @@ class TemporaryDatabase {
             color = "orange",
             evolutionStage = 1,
             averageHeight = 60.0F,
-            averageWeight = 8.5F
+            averageWeight = 8.5F,
+            isLegendary = false,
+            isMythical = false
         )
 
         var pokemonGuessList = mutableMapOf(
@@ -21,7 +23,9 @@ class TemporaryDatabase {
                 color = "orange",
                 evolutionStage = 1,
                 averageHeight = 60.0F,
-                averageWeight = 8.5F
+                averageWeight = 8.5F,
+                isLegendary = false,
+                isMythical = false
             ),
             2L to PokemonModel(
                 name = "bulbasaur",
@@ -30,7 +34,9 @@ class TemporaryDatabase {
                 color = "green",
                 evolutionStage = 1,
                 averageHeight = 70.0F,
-                averageWeight = 6.9F
+                averageWeight = 6.9F,
+                isLegendary = false,
+                isMythical = false
             ),
             3L to PokemonModel(
                 name = "squirtle",
@@ -39,7 +45,9 @@ class TemporaryDatabase {
                 color = "blue",
                 evolutionStage = 1,
                 averageHeight = 50.0F,
-                averageWeight = 9F
+                averageWeight = 9F,
+                isLegendary = false,
+                isMythical = false
             )
         )
 

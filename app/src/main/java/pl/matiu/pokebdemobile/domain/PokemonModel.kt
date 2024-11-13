@@ -7,5 +7,7 @@ data class PokemonModel(
     val environment: String?,
     val evolutionStage: Int?,
     val averageHeight: Float?,
-    val averageWeight: Float?
+    val averageWeight: Float?,
+    val isLegendary: Boolean,
+    val isMythical: Boolean
 )

@@ -57,6 +57,8 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
+
     //voyager
     val voyagerVersion = "1.1.0-beta02"
     implementation("cafe.adriel.voyager:voyager-navigator:$voyagerVersion")
@@ -83,4 +85,7 @@ dependencies {
     testImplementation("io.insert-koin:koin-test-junit5:$koin_version")
     implementation("io.insert-koin:koin-ktor:$koin_version")
     implementation("io.insert-koin:koin-logger-slf4j:$koin_version")
+
+    //gson
+    implementation("com.google.code.gson:gson:2.11.0")
 }
