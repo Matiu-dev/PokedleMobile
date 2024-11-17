@@ -32,7 +32,6 @@ fun EndGameDialog(numberOfShots: Int, modifier: Modifier) {
         confirmButton = {
             TextButton(
                 onClick = {
-//                    onConfirmation()
                     navigator.push(ResultGameScreen(numberOfShots = numberOfShots, modifier = modifier))
                 }
             ) {

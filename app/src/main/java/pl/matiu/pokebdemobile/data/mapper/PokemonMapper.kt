@@ -1,4 +1,4 @@
-package pl.matiu.pokebdemobile.data
+package pl.matiu.pokebdemobile.data.mapper
 
 import android.util.Log
 import pl.matiu.pokebdemobile.data.dto.PokemonDto

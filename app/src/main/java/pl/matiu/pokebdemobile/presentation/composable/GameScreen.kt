@@ -24,7 +24,6 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Button
@@ -32,11 +31,12 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
+//import androidx.lifecycle.viewmodel.compose.viewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
+
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import pl.matiu.pokebdemobile.domain.TemporaryDatabase
@@ -51,8 +51,6 @@ data class GameScreen(val modifier: Modifier) : Screen {
         val context = LocalContext.current
         val state = rememberLazyListState()
 
-        val navigator = LocalNavigator.currentOrThrow
-//        val listOfGuessedPokemon = remember { mutableStateListOf<PokemonModel>() }
         var pokemonName by rememberSaveable { mutableStateOf("") }
 
         val pokemonViewModel: PokemonViewModel = viewModel()

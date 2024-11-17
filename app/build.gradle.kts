@@ -79,12 +79,13 @@ dependencies {
 
     //koin
     val koin_version = "4.0.0"
-    implementation(project.dependencies.platform("io.insert-koin:koin-bom:$koin_version"))
-    implementation("io.insert-koin:koin-core")
-    testImplementation("io.insert-koin:koin-test:$koin_version")
-    testImplementation("io.insert-koin:koin-test-junit5:$koin_version")
-    implementation("io.insert-koin:koin-ktor:$koin_version")
-    implementation("io.insert-koin:koin-logger-slf4j:$koin_version")
+//    implementation(project.dependencies.platform("io.insert-koin:koin-bom:$koin_version"))
+    implementation("io.insert-koin:koin-android:$koin_version")
+//    implementation("io.insert-koin:koin-core")
+//    testImplementation("io.insert-koin:koin-test:$koin_version")
+//    testImplementation("io.insert-koin:koin-test-junit5:$koin_version")
+//    implementation("io.insert-koin:koin-ktor:$koin_version")
+//    implementation("io.insert-koin:koin-logger-slf4j:$koin_version")
 
     //gson
     implementation("com.google.code.gson:gson:2.11.0")

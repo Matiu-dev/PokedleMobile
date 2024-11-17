@@ -1,10 +1,9 @@
-package pl.matiu.pokebdemobile.data
+package pl.matiu.pokebdemobile.data.api
 
 import io.ktor.client.*
 import io.ktor.client.call.body
 import io.ktor.client.engine.cio.*
 import io.ktor.client.request.*
-import pl.matiu.pokebdemobile.data.dto.PokemonSpeciesDto
 
 class PokeApi {
     suspend fun getPokemonSpeciesDataAsString(pokemonName: String): String {
