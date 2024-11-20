@@ -47,7 +47,7 @@ data class ResultGameScreen(val numberOfShots: Int, val modifier: Modifier) : Sc
 
             ) {
                 Row {
-                    Text(text = "Trafiłeś pokemona za ${numberOfShots} razem", color = Color.White)
+                    Text(text = "Trafiłeś pokemona za ${numberOfShots} razem", color = Color.Black)
                 }
 
                 Spacer(modifier = Modifier.padding(5.dp))

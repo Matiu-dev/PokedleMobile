@@ -14,4 +14,7 @@ class ExampleUnitTest {
     fun addition_isCorrect() {
         assertEquals(4, 2 + 2)
     }
+
+    //TODO test strzału nazwy pokemona / sprawdzenie czy istnieje / sprawdzenie czy został juz sprawdzony, juz jest na liscie / czy udało sie trafić
+    //w miejscu wpisania nazwy pokemona powinna byc podpowiedz calej nazwy po wpisaniu jednej litery lub wiecej
 }

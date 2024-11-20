@@ -1,5 +1,51 @@
 package pl.matiu.pokebdemobile.domain
 
+
+val pokemonNames = listOf(
+    "bulbasaur", "ivysaur", "venusaur",
+    "charmander", "charmeleon", "charizard",
+    "squirtle", "wartortle", "blastoise",
+    "caterpie", "metapod", "butterfree",
+    "weedle", "kakuna", "beedrill",
+    "pidgey", "pidgeotto", "pidgeot",
+    "rattata", "raticate", "spearow",
+    "fearow", "ekans", "arbok",
+    "pikachu", "raichu", "sandshrew",
+    "sandslash", "nidoran♀", "nidorina",
+    "nidoqueen", "nidoran♂", "nidorino",
+    "nidoking", "clefairy", "clefable",
+    "vulpix", "ninetales", "jigglypuff",
+    "wigglytuff", "zubat", "golbat",
+    "oddish", "gloom", "vileplume",
+    "paras", "parases", "venonat",
+    "venomoth", "diglett", "dugtrio",
+    "meowth", "persian", "psyduck",
+    "golduck", "machop", "machoke",
+    "machamp", "bellsprout", "weepinbell",
+    "victreebel", "tentacool", "tentacruel",
+    "geodude", "graveler", "golem",
+    "ponyta", "rapidash", "slowpoke",
+    "slowbro", "magnemite", "magneton",
+    "farfetch'd", "doduo", "dodrio",
+    "seel", "dewgong", "grimer",
+    "muk", "shellder", "cloyster",
+    "gastly", "haunter", "gengar",
+    "onix", "drowzee", "hypno",
+    "krabby", "kingler", "exeggcute",
+    "exeggutor", "cubone", "marowak",
+    "hitmonlee", "hitmonchan", "lickitung",
+    "koffing", "weezing", "rhyhorn",
+    "rhydon", "chansey", "tangela",
+    "kangaskhan", "horsea", "seadra",
+    "goldeen", "seaking", "staryu",
+    "starmie", "mr mime", "scyther",
+    "electabuzz", "magmar", "pinsir",
+    "tauros", "magikarp", "gyarados",
+    "lapras", "ditto", "eevee",
+    "vaporeon", "jolteon", "flareon",
+    "porygon"
+)
+
 class TemporaryDatabase {
 
     companion object {
@@ -15,45 +61,7 @@ class TemporaryDatabase {
             isMythical = false
         )
 
-        var pokemonGuessList = mutableMapOf(
-            1L to PokemonModel(
-                name = "charmander",
-                typeList = listOf("fire"),
-                environment = "mountain",
-                color = "orange",
-//                evolutionStage = 1,
-                averageHeight = 60,
-                averageWeight = 8,
-                isLegendary = false,
-                isMythical = false
-            ),
-            2L to PokemonModel(
-                name = "bulbasaur",
-                typeList = listOf("grass", "poison"),
-                environment = "grassland",
-                color = "green",
-//                evolutionStage = 1,
-                averageHeight = 70,
-                averageWeight = 6,
-                isLegendary = false,
-                isMythical = false
-            ),
-            3L to PokemonModel(
-                name = "squirtle",
-                typeList = listOf("water"),
-                environment = "waters-edge",
-                color = "blue",
-//                evolutionStage = 1,
-                averageHeight = 50,
-                averageWeight = 9,
-                isLegendary = false,
-                isMythical = false
-            )
-        )
 
-    }
 
-    fun getPokemonGuessList(): Map<Long, PokemonModel> {
-        return pokemonGuessList
     }
 }

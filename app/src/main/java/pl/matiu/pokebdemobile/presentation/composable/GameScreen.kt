@@ -20,6 +20,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
@@ -27,6 +28,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -41,6 +43,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import pl.matiu.pokebdemobile.domain.TemporaryDatabase
 import pl.matiu.pokebdemobile.domain.PokemonModel
+import pl.matiu.pokebdemobile.domain.pokemonNames
 import pl.matiu.pokebdemobile.presentation.PokemonViewModel
 
 data class GameScreen(val modifier: Modifier) : Screen {
@@ -53,6 +56,16 @@ data class GameScreen(val modifier: Modifier) : Screen {
 
         var pokemonName by rememberSaveable { mutableStateOf("") }
 
+        //TODO po zmiane pokemonName sprawdzenie czy jakas nazwa pokemona sie pokrywa
+        val pokemonListHint = mutableListOf<String>()
+        val pattern = Regex("^${pokemonName}")
+        pokemonNames.forEach {
+            if(pattern.containsMatchIn(it) && pokemonName.isNotEmpty()) {
+                pokemonListHint.add(it)
+                Log.d("nazwa pokemona sie pokrywa", it)
+            }
+        }
+
         val pokemonViewModel: PokemonViewModel = viewModel()
         var listOfGuessedPokemon = pokemonViewModel.pokemonModel.collectAsState()
 
@@ -60,7 +73,7 @@ data class GameScreen(val modifier: Modifier) : Screen {
         var endGame = rememberSaveable { mutableStateOf(false) }
         var showDialog = rememberSaveable { mutableStateOf(false) }
 
-        if(endGame.value) {
+        if (endGame.value) {
             LaunchedEffect(endGame) {
                 var del = launch {
                     delay(3500)
@@ -91,48 +104,38 @@ data class GameScreen(val modifier: Modifier) : Screen {
             Row(modifier = Modifier.fillMaxWidth()) {
                 Button(
                     onClick = {
-//                        if (!isPokemonExist(pokemonName)
-//                        ) {
-                        //TODo sprawdzenie czy dany pokemon istnieje
+                        if (isPokemonExist(pokemonName)) {
+                            if (!isPokemonSelected(listOfGuessedPokemon.value, pokemonName)) {
+                                numberOfShots.intValue += 1
+                                pokemonViewModel.getPokemonInfo(pokemonName = pokemonName)
+                                if (pokemonName == TemporaryDatabase.todayPokemon.name) {
+                                    Toast.makeText(
+                                        context,
+                                        "Udało Ci się zgadnąć. Dzisiejszy pokemon to ${pokemonName}.",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
 
-                        if (!isPokemonSelected(listOfGuessedPokemon.value, pokemonName)) {
+                                    endGame.value = true
 
-                            numberOfShots.intValue += 1
-
-                            pokemonViewModel.getPokemonInfo(pokemonName = pokemonName)
-
-                            if (pokemonName == TemporaryDatabase.todayPokemon.name) {
-                                Toast.makeText(
-                                    context,
-                                    "Udało Ci się zgadnąć. Dzisiejszy pokemon to ${pokemonName}.",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-
-                                endGame.value = true
-
+                                } else {
+                                    Toast.makeText(
+                                        context,
+                                        "Nie trafiłeś tym razem. Spróbuj ponownie.",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
                             } else {
                                 Toast.makeText(
                                     context,
-                                    "Nie trafiłeś tym razem. Spróbuj ponownie.",
+                                    "Sprawdziłeś już tego pokemona.",
                                     Toast.LENGTH_SHORT
-                                ).show()
+                                )
+                                    .show()
                             }
                         } else {
-                            Toast.makeText(
-                                context,
-                                "Sprawdziłeś już tego pokemona.",
-                                Toast.LENGTH_SHORT
-                            )
+                            Toast.makeText(context, "Nie ma takiego pokemona.", Toast.LENGTH_SHORT)
                                 .show()
                         }
-
-
-//                        } else {
-//                            Toast.makeText(context, "Nie ma takiego pokemona.", Toast.LENGTH_SHORT)
-//                                .show()
-//                        }
-
-
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -172,8 +175,7 @@ data class GameScreen(val modifier: Modifier) : Screen {
 }
 
 fun isPokemonExist(pokemonName: String): Boolean {
-    return TemporaryDatabase.pokemonGuessList.asSequence()
-        .filter { it.value.name == pokemonName }.firstOrNull() == null
+    return pokemonNames.contains(pokemonName)
 }
 
 fun isPokemonSelected(guessedPokemonList: List<PokemonModel>, pokemonName: String): Boolean {
@@ -271,8 +273,6 @@ fun GuessPokemonEditText(
     pokemonName: String,
     onPokemonNameChange: (String) -> Unit
 ) {
-
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -290,6 +290,10 @@ fun GuessPokemonEditText(
             onValueChange = { onPokemonNameChange(it) },
             modifier = Modifier.weight(2f)
         )
+
+//        Box() {
+//            DropdownMenu() { }
+//        }
     }
 }
 
