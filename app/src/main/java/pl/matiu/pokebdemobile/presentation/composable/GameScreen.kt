@@ -29,11 +29,17 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 //import androidx.lifecycle.viewmodel.compose.viewModel
@@ -99,7 +105,9 @@ data class GameScreen(val modifier: Modifier) : Screen {
         Column(modifier = modifier) {
 
             GuessPokemonEditText(pokemonName = pokemonName,
-                onPokemonNameChange = { pokemonName = it })
+                onPokemonNameChange = { pokemonName = it },
+                pokemonNames = pokemonListHint
+            )
 
             Row(modifier = Modifier.fillMaxWidth()) {
                 Button(
@@ -268,11 +276,23 @@ fun GenerateAnswers(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GuessPokemonEditText(
     pokemonName: String,
-    onPokemonNameChange: (String) -> Unit
+    onPokemonNameChange: (String) -> Unit,
+    pokemonNames: List<String>,
+
 ) {
+
+    val expanded = rememberSaveable{mutableStateOf(false)}
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(pokemonNames.size) {
+        expanded.value = pokemonNames.isNotEmpty()
+        focusRequester.requestFocus()
+    }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -285,15 +305,33 @@ fun GuessPokemonEditText(
                 .weight(1f)
         )
 
-        TextField(
-            value = pokemonName,
-            onValueChange = { onPokemonNameChange(it) },
-            modifier = Modifier.weight(2f)
-        )
+        ExposedDropdownMenuBox(
+            modifier = Modifier.weight(2f),
+            expanded = expanded.value,
+            onExpandedChange = { expanded.value = it }
+        ) {
+            TextField(
+                value = pokemonName,
+                onValueChange = { onPokemonNameChange(it) },
+                modifier = Modifier.focusRequester(focusRequester)
+            )
 
-//        Box() {
-//            DropdownMenu() { }
-//        }
+            DropdownMenu(
+                expanded = expanded.value,
+                onDismissRequest = { expanded.value = false }
+            ) {
+                for (name in pokemonNames) {
+                    DropdownMenuItem(
+                        text = {
+                            Text(text = name)
+                        },
+                        onClick = {
+                            onPokemonNameChange(name)
+                        }
+                    )
+                }
+            }
+        }
     }
 }
 
