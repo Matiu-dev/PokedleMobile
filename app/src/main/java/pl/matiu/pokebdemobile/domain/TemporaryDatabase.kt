@@ -1,5 +1,11 @@
 package pl.matiu.pokebdemobile.domain
 
+import androidx.lifecycle.viewmodel.compose.viewModel
+import org.koin.java.KoinJavaComponent.inject
+import pl.matiu.pokebdemobile.data.repository.PokemonRepositoryImpl
+import pl.matiu.pokebdemobile.presentation.PokemonViewModel
+import kotlin.random.Random
+
 
 val pokemonNames = listOf(
     "bulbasaur", "ivysaur", "venusaur",
@@ -17,51 +23,55 @@ val pokemonNames = listOf(
     "vulpix", "ninetales", "jigglypuff",
     "wigglytuff", "zubat", "golbat",
     "oddish", "gloom", "vileplume",
-    "paras", "parases", "venonat",
+    "paras", "parasect", "venonat",
     "venomoth", "diglett", "dugtrio",
     "meowth", "persian", "psyduck",
-    "golduck", "machop", "machoke",
-    "machamp", "bellsprout", "weepinbell",
-    "victreebel", "tentacool", "tentacruel",
-    "geodude", "graveler", "golem",
-    "ponyta", "rapidash", "slowpoke",
-    "slowbro", "magnemite", "magneton",
-    "farfetch'd", "doduo", "dodrio",
-    "seel", "dewgong", "grimer",
-    "muk", "shellder", "cloyster",
-    "gastly", "haunter", "gengar",
-    "onix", "drowzee", "hypno",
-    "krabby", "kingler", "exeggcute",
-    "exeggutor", "cubone", "marowak",
-    "hitmonlee", "hitmonchan", "lickitung",
-    "koffing", "weezing", "rhyhorn",
-    "rhydon", "chansey", "tangela",
-    "kangaskhan", "horsea", "seadra",
-    "goldeen", "seaking", "staryu",
-    "starmie", "mr mime", "scyther",
-    "electabuzz", "magmar", "pinsir",
-    "tauros", "magikarp", "gyarados",
-    "lapras", "ditto", "eevee",
-    "vaporeon", "jolteon", "flareon",
-    "porygon"
+    "golduck", "mankey", "primeape",
+    "growlithe", "arcanine", "poliwag",
+    "poliwhirl", "poliwrath", "abra",
+    "kadabra", "alakazam", "machop",
+    "machoke", "machamp", "bellsprout",
+    "weepinbell", "victreebel", "tentacool",
+    "tentacruel", "geodude", "graveler",
+    "golem", "ponyta", "rapidash",
+    "slowpoke", "slowbro", "magnemite",
+    "magneton", "farfetch'd", "doduo",
+    "dodrio", "seel", "dewgong",
+    "grimer", "muk", "shellder",
+    "cloyster", "gastly", "haunter",
+    "gengar", "onix", "drowzee",
+    "hypno", "krabby", "kingler",
+    "exeggcute", "exeggutor", "cubone",
+    "marowak", "hitmonlee", "hitmonchan",
+    "lickitung", "koffing", "weezing",
+    "rhyhorn", "rhydon", "chansey",
+    "tangela", "kangaskhan", "horsea",
+    "seadra", "goldeen", "seaking",
+    "staryu", "starmie", "mr. mime",
+    "scyther", "jynx", "electabuzz",
+    "magmar", "pinsir", "tauros",
+    "magikarp", "gyarados", "lapras",
+    "ditto", "eevee", "vaporeon",
+    "jolteon", "flareon", "porygon",
+    "omanyte", "omastar", "kabuto",
+    "kabutops", "aerodactyl", "snorlax",
+    "articuno", "zapdos", "moltres",
+    "dratini", "dragonair", "dragonite",
+    "mewtwo", "mew"
 )
 
 class TemporaryDatabase {
 
     companion object {
-        val todayPokemon = PokemonModel(
-            name = "charmander",
-            typeList = listOf("fire"),
-            environment = "mountain",
-            color = "red",
-//            evolutionStage = 1,
-            averageHeight = 6,
-            averageWeight = 85,
-            isLegendary = false,
-            isMythical = false
-        )
+        lateinit var todayPokemon: PokemonModel
+    }
 
+    suspend fun generateRandomPokemon() {
 
+        val pokemonRepository: PokemonRepositoryImpl by inject(PokemonRepositoryImpl::class.java)
+        todayPokemon = pokemonRepository.getPokemonByName(name = pokemonNames[(Random.nextInt(0, pokemonNames.size))])
 
     }
+
+
 }

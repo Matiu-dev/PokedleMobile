@@ -2,6 +2,7 @@ package pl.matiu.pokebdemobile.presentation.composable
 
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,15 +30,19 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
-//import androidx.lifecycle.viewmodel.compose.viewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
+
 
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -55,16 +60,6 @@ data class GameScreen(val modifier: Modifier) : Screen {
         val state = rememberLazyListState()
 
         var pokemonName by rememberSaveable { mutableStateOf("") }
-
-        //TODO po zmiane pokemonName sprawdzenie czy jakas nazwa pokemona sie pokrywa
-        val pokemonListHint = mutableListOf<String>()
-        val pattern = Regex("^${pokemonName}")
-        pokemonNames.forEach {
-            if(pattern.containsMatchIn(it) && pokemonName.isNotEmpty()) {
-                pokemonListHint.add(it)
-                Log.d("nazwa pokemona sie pokrywa", it)
-            }
-        }
 
         val pokemonViewModel: PokemonViewModel = viewModel()
         var listOfGuessedPokemon = pokemonViewModel.pokemonModel.collectAsState()
@@ -98,8 +93,10 @@ data class GameScreen(val modifier: Modifier) : Screen {
 
         Column(modifier = modifier) {
 
-            GuessPokemonEditText(pokemonName = pokemonName,
-                onPokemonNameChange = { pokemonName = it })
+            GuessPokemonEditText(
+                pokemonName = pokemonName,
+                onPokemonNameChange = { pokemonName = it }
+            )
 
             Row(modifier = Modifier.fillMaxWidth()) {
                 Button(
@@ -271,29 +268,59 @@ fun GenerateAnswers(
 @Composable
 fun GuessPokemonEditText(
     pokemonName: String,
-    onPokemonNameChange: (String) -> Unit
+    onPokemonNameChange: (String) -> Unit,
 ) {
+
+    //TODO po zmiane pokemonName sprawdzenie czy jakas nazwa pokemona sie pokrywa
+    val pokemonNames = mutableListOf<String>()
+    val pattern = Regex("^${pokemonName}")
+    pl.matiu.pokebdemobile.domain.pokemonNames.forEach {
+        if(pattern.containsMatchIn(it) && pokemonName.isNotEmpty()) {
+            pokemonNames.add(it)
+            Log.d("nazwa pokemona sie pokrywa", it)
+        }
+    }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(10.dp)
             .padding(top = 10.dp)
     ) {
-        Text(
-            text = "wpisz nazwe", modifier = Modifier
-                .padding(end = 5.dp)
-                .weight(1f)
-        )
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = "wpisz nazwe", modifier = Modifier
+                    .padding(end = 5.dp)
+            )
+        }
 
-        TextField(
-            value = pokemonName,
-            onValueChange = { onPokemonNameChange(it) },
-            modifier = Modifier.weight(2f)
-        )
 
-//        Box() {
-//            DropdownMenu() { }
-//        }
+        Column(modifier = Modifier.weight(2f)) {
+
+            Row {
+                TextField(
+                    value = pokemonName,
+                    onValueChange = {
+                        onPokemonNameChange(it)
+                    },
+                )
+            }
+
+            Row {
+                LazyColumn {
+                    items(pokemonNames) {
+                        if(pokemonName != it) {
+                            Row(modifier = Modifier.clickable { onPokemonNameChange(it) }) {
+                                Text(text = it)
+                            }
+                        }
+
+                    }
+                }
+            }
+
+
+        }
     }
 }
 
