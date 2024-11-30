@@ -32,9 +32,7 @@ class PokemonViewModel: ViewModel() {
                     pokemonRepository.getPokemonByName(name = pokemonName)
                 }
 
-                val pokemon = pokemonDeffered.await()
-
-                _pokemonModel.value = _pokemonModel.value.plus(pokemon)
+                _pokemonModel.value = _pokemonModel.value.plus(pokemonDeffered.await())
             }
 
         }
@@ -46,15 +44,8 @@ class PokemonViewModel: ViewModel() {
                 pokemonRepository.getPokemonByName(name = pokemonNames[Random.nextInt(0, pokemonNames.size)])
             }
 
-            val pokemon = pokemonDeffered.await()
-
-            if(pokemon != null) {
-                todayPokemon = pokemon
-                Log.d("PokemonModel", "Wylosowany pokemon to: " +pokemon.name.toString())
-            }else {
-                Log.e("Error", "Pokemon not found!")
-            }
+            todayPokemon = pokemonDeffered.await()
+            Log.d("PokemonModel", "Today pokemon: " + todayPokemon.name.toString())
         }
     }
-
 }

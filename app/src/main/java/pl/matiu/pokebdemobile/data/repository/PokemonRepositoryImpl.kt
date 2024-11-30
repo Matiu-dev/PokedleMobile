@@ -18,13 +18,11 @@ class PokemonRepositoryImpl: PokemonRepository {
 
     suspend fun getPokemonByName(name: String): PokemonModel {
         if(pokemonDao.getPokemonByName(name) == null) {
-            Log.d("PokemonModel", "Pobierania pokemona z api o nazwie $name")
-            addPokemon(getPokemonData(name))
-            return pokemonDao.getPokemonByName(name)!!
-        } else {
-            Log.d("PokemonModel", "Pokemon ${name.toUpperCase()} jest już w bazie danych")
-            return pokemonDao.getPokemonByName(name)!!
+            Log.d("PokemonModel", "Downloading pokemon from API: $name")
+            addPokemonToLocalStorage(getPokemonData(name))
         }
+
+        return pokemonDao.getPokemonByName(name)!!
     }
 
     private suspend fun getPokemonData(pokemonName: String): PokemonModel {
@@ -45,7 +43,7 @@ class PokemonRepositoryImpl: PokemonRepository {
         return pokemonDataResponse
     }
 
-     private fun addPokemon(pokemonModel: PokemonModel) {
+     private fun addPokemonToLocalStorage(pokemonModel: PokemonModel) {
         pokemonDao.addPokemon(pokemonModel)
     }
 }

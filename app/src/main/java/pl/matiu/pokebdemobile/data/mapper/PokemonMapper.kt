@@ -18,7 +18,6 @@ fun PokemonDto.toPokemonModel(pokemonDataResponse: PokemonModel) {
 
     for(type in types) {
         listTypes.add(type.type.name)
-        Log.d("types", type.type.name)
     }
 
     pokemonDataResponse.typeList = listTypes
