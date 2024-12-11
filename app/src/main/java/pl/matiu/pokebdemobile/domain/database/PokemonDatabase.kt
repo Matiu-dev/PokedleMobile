@@ -1,18 +1,16 @@
 package pl.matiu.pokebdemobile.domain.database
 
 import androidx.room.Database
-import androidx.room.DatabaseConfiguration
-import androidx.room.InvalidationTracker
 import androidx.room.RoomDatabase
-import androidx.room.TypeConverter
 import androidx.room.TypeConverters
-import androidx.sqlite.db.SupportSQLiteOpenHelper
-import pl.matiu.pokebdemobile.domain.PokemonModel
+import pl.matiu.pokebdemobile.domain.entity.PokemonModel
 import pl.matiu.pokebdemobile.domain.PokemonTypeConverter
+import pl.matiu.pokebdemobile.domain.entity.PokemonShots
 
-@Database(entities = [PokemonModel::class], version = 1)
+@Database(entities = [PokemonModel::class, PokemonShots::class], version = 2)
 @TypeConverters(PokemonTypeConverter::class)
 abstract class PokemonDatabase: RoomDatabase() {
 
     abstract fun getPokemonDao(): PokemonDao
+    abstract fun getPokemonShotsDao(): PokemonShotsDao
 }

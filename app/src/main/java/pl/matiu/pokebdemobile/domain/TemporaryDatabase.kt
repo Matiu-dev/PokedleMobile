@@ -1,9 +1,8 @@
 package pl.matiu.pokebdemobile.domain
 
-import androidx.lifecycle.viewmodel.compose.viewModel
 import org.koin.java.KoinJavaComponent.inject
 import pl.matiu.pokebdemobile.data.repository.PokemonRepositoryImpl
-import pl.matiu.pokebdemobile.presentation.PokemonViewModel
+import pl.matiu.pokebdemobile.domain.entity.PokemonModel
 import kotlin.random.Random
 
 

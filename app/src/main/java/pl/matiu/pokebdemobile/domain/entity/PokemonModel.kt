@@ -1,4 +1,4 @@
-package pl.matiu.pokebdemobile.domain
+package pl.matiu.pokebdemobile.domain.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

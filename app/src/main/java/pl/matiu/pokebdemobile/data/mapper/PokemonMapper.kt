@@ -1,9 +1,9 @@
 package pl.matiu.pokebdemobile.data.mapper
 
-import android.util.Log
 import pl.matiu.pokebdemobile.data.dto.PokemonDto
 import pl.matiu.pokebdemobile.data.dto.PokemonSpeciesDto
-import pl.matiu.pokebdemobile.domain.PokemonModel
+import pl.matiu.pokebdemobile.domain.entity.PokemonModel
+import pl.matiu.pokebdemobile.domain.entity.PokemonShots
 
 fun PokemonSpeciesDto.toPokemonModel(pokemonDataResponse: PokemonModel) {
     pokemonDataResponse.name = name
@@ -24,3 +24,11 @@ fun PokemonDto.toPokemonModel(pokemonDataResponse: PokemonModel) {
     pokemonDataResponse.averageWeight = weight
     pokemonDataResponse.averageHeight = height
 }
+
+fun PokemonModel.toPokemonShots(pokemonModel: PokemonModel): PokemonShots {
+    return PokemonShots(
+        name = pokemonModel.name,
+        id = pokemonModel.id,
+    )
+}
+

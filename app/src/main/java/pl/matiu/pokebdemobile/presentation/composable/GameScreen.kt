@@ -36,7 +36,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import cafe.adriel.voyager.core.screen.Screen
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import pl.matiu.pokebdemobile.domain.PokemonModel
+import pl.matiu.pokebdemobile.domain.entity.PokemonModel
 import pl.matiu.pokebdemobile.domain.TemporaryDatabase
 import pl.matiu.pokebdemobile.domain.pokemonNames
 import pl.matiu.pokebdemobile.presentation.PokemonViewModel
@@ -101,6 +101,7 @@ data class GameScreen(val modifier: Modifier) : Screen {
                                         "Udało Ci się zgadnąć. Dzisiejszy pokemon to ${pokemonName}.",
                                         Toast.LENGTH_SHORT
                                     ).show()
+
 
                                     endGame.value = true
 
@@ -307,8 +308,6 @@ fun GuessPokemonEditText(
                     }
                 }
             }
-
-
         }
     }
 }

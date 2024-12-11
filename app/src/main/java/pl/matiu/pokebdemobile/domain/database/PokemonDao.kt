@@ -3,7 +3,7 @@ package pl.matiu.pokebdemobile.domain.database
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import pl.matiu.pokebdemobile.domain.PokemonModel
+import pl.matiu.pokebdemobile.domain.entity.PokemonModel
 
 @Dao
 interface PokemonDao {
