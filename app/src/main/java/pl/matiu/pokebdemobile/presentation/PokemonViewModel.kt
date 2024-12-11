@@ -15,7 +15,6 @@ import pl.matiu.pokebdemobile.data.repository.PokemonShotsRepositoryImpl
 import pl.matiu.pokebdemobile.domain.entity.PokemonModel
 import pl.matiu.pokebdemobile.domain.TemporaryDatabase.Companion.todayPokemon
 import pl.matiu.pokebdemobile.domain.pokemonNames
-import kotlin.random.Random
 
 class PokemonViewModel: ViewModel() {
 
@@ -26,10 +25,10 @@ class PokemonViewModel: ViewModel() {
     val pokemonModel: StateFlow<List<PokemonModel>> = _pokemonModel
 
     init {
-        loadPokemonShots()
+        loadPokemonShoots()
     }
 
-    private fun loadPokemonShots() {
+    private fun loadPokemonShoots() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 pokemonShotsRepository.getAllPokemonShoots().forEach { pokemonShot ->

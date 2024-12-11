@@ -54,7 +54,6 @@ data class GameScreen(val modifier: Modifier) : Screen {
         val pokemonViewModel: PokemonViewModel = viewModel()
         var listOfGuessedPokemon = pokemonViewModel.pokemonModel.collectAsState()
 
-        var numberOfShots = rememberSaveable { mutableIntStateOf(0) }
         var endGame = rememberSaveable { mutableStateOf(false) }
         var showDialog = rememberSaveable { mutableStateOf(false) }
 
@@ -70,7 +69,7 @@ data class GameScreen(val modifier: Modifier) : Screen {
 
         Log.d("show dialog", showDialog.toString())
         if (showDialog.value) {
-            EndGameDialog(numberOfShots = numberOfShots.intValue, modifier = modifier)
+            EndGameDialog(numberOfShots = listOfGuessedPokemon.value.size, modifier = modifier)
         }
 
 
@@ -93,7 +92,6 @@ data class GameScreen(val modifier: Modifier) : Screen {
                     onClick = {
                         if (isPokemonExist(pokemonName)) {
                             if (!isPokemonSelected(listOfGuessedPokemon.value, pokemonName)) {
-                                numberOfShots.intValue += 1
                                 pokemonViewModel.getPokemonInfo(pokemonName = pokemonName)
                                 if (pokemonName == TemporaryDatabase.todayPokemon.name) {
                                     Toast.makeText(
