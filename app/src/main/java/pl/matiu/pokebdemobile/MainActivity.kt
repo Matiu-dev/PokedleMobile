@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import cafe.adriel.voyager.navigator.Navigator
@@ -66,6 +67,7 @@ fun Greeting() {
             }
         },
     ) { innerPadding ->
+
         Navigator(GreetingGameScreen(modifier = Modifier.padding(innerPadding))) { navigator ->
             SlideTransition(navigator)
         }

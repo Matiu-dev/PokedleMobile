@@ -17,6 +17,7 @@ val mainModule = module {
     viewModelOf(::PokemonViewModel)
     singleOf( ::PokemonRepositoryImpl) { bind<PokemonRepository>() }
     singleOf( ::PokemonShotsRepositoryImpl) { bind<PokemonShotsRepositoryImpl>() }
+
     single {
         Room.databaseBuilder(
             get(),

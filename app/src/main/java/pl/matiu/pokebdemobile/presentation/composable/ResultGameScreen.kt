@@ -1,5 +1,6 @@
 package pl.matiu.pokebdemobile.presentation.composable
 
+import android.util.Log
 import android.widget.Space
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -21,9 +22,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import pl.matiu.pokebdemobile.Greeting
+import pl.matiu.pokebdemobile.presentation.PokemonViewModel
 
 data class ResultGameScreen(val numberOfShots: Int, val modifier: Modifier) : Screen {
 
@@ -47,7 +52,7 @@ data class ResultGameScreen(val numberOfShots: Int, val modifier: Modifier) : Sc
 
             ) {
                 Row {
-                    Text(text = "Trafiłeś pokemona za ${numberOfShots} razem", color = Color.Black)
+                    Text(text = "Trafiłeś pokemona za $numberOfShots razem", color = Color.Black)
                 }
 
                 Spacer(modifier = Modifier.padding(5.dp))

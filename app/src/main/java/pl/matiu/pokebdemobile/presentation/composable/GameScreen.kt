@@ -3,6 +3,7 @@ package pl.matiu.pokebdemobile.presentation.composable
 
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -34,14 +35,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.Navigator
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import pl.matiu.pokebdemobile.R
 import pl.matiu.pokebdemobile.domain.entity.PokemonModel
 import pl.matiu.pokebdemobile.domain.TemporaryDatabase
 import pl.matiu.pokebdemobile.domain.pokemonNames
 import pl.matiu.pokebdemobile.presentation.PokemonViewModel
 
-data class GameScreen(val modifier: Modifier) : Screen {
+data class GameScreen(val modifier: Modifier, val navigator: Navigator) : Screen {
 
     @Composable
     override fun Content() {
@@ -238,7 +241,8 @@ fun GenerateAnswers(
         Column {
             FlippableCardContainer(
                 pokemonModel!!.averageHeight.toString(), 2500,
-                if (pokemonModel.averageHeight == TemporaryDatabase.todayPokemon.averageHeight) Color.Green else Color.Red
+                if (pokemonModel.averageHeight == TemporaryDatabase.todayPokemon.averageHeight) Color.Green else Color.Red,
+                iconUpOrDown = if (pokemonModel.averageHeight!! > TemporaryDatabase.todayPokemon.averageHeight!!) R.drawable.arrowdown else R.drawable.arrowup
             )
         }
 
@@ -247,7 +251,8 @@ fun GenerateAnswers(
         Column {
             FlippableCardContainer(
                 pokemonModel!!.averageWeight.toString(), 3000,
-                if (pokemonModel.averageWeight == TemporaryDatabase.todayPokemon.averageWeight) Color.Green else Color.Red
+                if (pokemonModel.averageWeight == TemporaryDatabase.todayPokemon.averageWeight) Color.Green else Color.Red,
+                iconUpOrDown = if (pokemonModel.averageWeight!! > TemporaryDatabase.todayPokemon.averageWeight!!) R.drawable.arrowdown else R.drawable.arrowup
             )
         }
 //        }

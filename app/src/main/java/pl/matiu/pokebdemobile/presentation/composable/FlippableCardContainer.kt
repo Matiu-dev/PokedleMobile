@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 
 @Composable
-internal fun FlippableCardContainer(pokemonName: String, timeToLaunchCard: Long, color: Color) {
+internal fun FlippableCardContainer(pokemonName: String, timeToLaunchCard: Long, color: Color, iconUpOrDown: Int? = null) {
 
     var targetAngle by remember { mutableStateOf(0f) }
 
@@ -44,7 +44,8 @@ internal fun FlippableCardContainer(pokemonName: String, timeToLaunchCard: Long,
 //                .padding(horizontal = 5.dp),
             rotationAngle = rotation,
             pokemonName = pokemonName,
-            color = color
+            color = color,
+            iconUpOrDown = iconUpOrDown
         )
     }
 }
