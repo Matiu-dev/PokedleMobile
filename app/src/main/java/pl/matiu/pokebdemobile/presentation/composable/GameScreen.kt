@@ -26,6 +26,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
@@ -38,9 +40,9 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.Navigator
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import pl.matiu.pokebdemobile.R
 import pl.matiu.pokebdemobile.domain.entity.PokemonModel
-import pl.matiu.pokebdemobile.domain.TemporaryDatabase
 import pl.matiu.pokebdemobile.domain.pokemonNames
 import pl.matiu.pokebdemobile.presentation.PokemonViewModel
 
@@ -51,18 +53,26 @@ data class GameScreen(val modifier: Modifier, val navigator: Navigator) : Screen
 
         val context = LocalContext.current
         val state = rememberLazyListState()
+        val scope = rememberCoroutineScope()
 
         var pokemonName by rememberSaveable { mutableStateOf("") }
 
         val pokemonViewModel: PokemonViewModel = viewModel()
-        var listOfGuessedPokemon = pokemonViewModel.pokemonModel.collectAsState()
+        val listOfGuessedPokemon = pokemonViewModel.pokemonModel.collectAsState()
+        var todayPokemon by remember { mutableStateOf<PokemonModel?>(null) }
+        LaunchedEffect(null) {
+            runBlocking {
+                todayPokemon = pokemonViewModel.getTodayPokemonModel(context = context)
+            }
+        }
 
-        var endGame = rememberSaveable { mutableStateOf(false) }
-        var showDialog = rememberSaveable { mutableStateOf(false) }
+
+        val endGame = rememberSaveable { mutableStateOf(false) }
+        val showDialog = rememberSaveable { mutableStateOf(false) }
 
         if (endGame.value) {
             LaunchedEffect(endGame) {
-                var del = launch {
+                val del = launch {
                     delay(3500)
                 }
                 del.join()
@@ -95,8 +105,8 @@ data class GameScreen(val modifier: Modifier, val navigator: Navigator) : Screen
                     onClick = {
                         if (isPokemonExist(pokemonName)) {
                             if (!isPokemonSelected(listOfGuessedPokemon.value, pokemonName)) {
-                                pokemonViewModel.getPokemonInfo(pokemonName = pokemonName)
-                                if (pokemonName == TemporaryDatabase.todayPokemon.name) {
+                                pokemonViewModel.getPokemonInfo(pokemonName = pokemonName, context = context)
+                                if (pokemonName == todayPokemon?.name) {
                                     Toast.makeText(
                                         context,
                                         "Udało Ci się zgadnąć. Dzisiejszy pokemon to ${pokemonName}.",
@@ -152,7 +162,8 @@ data class GameScreen(val modifier: Modifier, val navigator: Navigator) : Screen
                         }
 
                         GenerateAnswers(
-                            pokemonModel = pokemonModel
+                            pokemonModel = pokemonModel,
+                            todayPokemon = todayPokemon
                         )
                     }
                 }
@@ -174,7 +185,8 @@ fun isPokemonSelected(guessedPokemonList: List<PokemonModel>, pokemonName: Strin
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun GenerateAnswers(
-    pokemonModel: PokemonModel?
+    pokemonModel: PokemonModel?,
+    todayPokemon: PokemonModel?
 ) {
 
     FlowRow(
@@ -188,7 +200,7 @@ fun GenerateAnswers(
             FlippableCardContainer(
                 pokemonModel!!.name.toString(),
                 500,
-                if (pokemonModel.name == TemporaryDatabase.todayPokemon.name) Color.Green else Color.Red
+                if (pokemonModel.name == todayPokemon?.name) Color.Green else Color.Red
             )
         }
 
@@ -204,7 +216,7 @@ fun GenerateAnswers(
             Column {
                 FlippableCardContainer(
                     type, 1000,
-                    checkContains(typeList)
+                    checkContains(typeList, todayPokemon)
                 )
             }
         }
@@ -214,7 +226,7 @@ fun GenerateAnswers(
         Column {
             FlippableCardContainer(
                 pokemonModel!!.environment!!, 1500,
-                if (pokemonModel.environment == TemporaryDatabase.todayPokemon.environment) Color.Green else Color.Red
+                if (pokemonModel.environment == todayPokemon?.environment) Color.Green else Color.Red
             )
         }
 
@@ -223,7 +235,7 @@ fun GenerateAnswers(
         Column {
             FlippableCardContainer(
                 pokemonModel!!.color!!, 2000,
-                if (pokemonModel.color == TemporaryDatabase.todayPokemon.color) Color.Green else Color.Red
+                if (pokemonModel.color == todayPokemon?.color) Color.Green else Color.Red
             )
         }
 
@@ -241,8 +253,8 @@ fun GenerateAnswers(
         Column {
             FlippableCardContainer(
                 pokemonModel!!.averageHeight.toString(), 2500,
-                if (pokemonModel.averageHeight == TemporaryDatabase.todayPokemon.averageHeight) Color.Green else Color.Red,
-                iconUpOrDown = if (pokemonModel.averageHeight!! > TemporaryDatabase.todayPokemon.averageHeight!!) R.drawable.arrowdown else R.drawable.arrowup
+                if (pokemonModel.averageHeight == todayPokemon?.averageHeight) Color.Green else Color.Red,
+                iconUpOrDown = if (pokemonModel.averageHeight!! > todayPokemon?.averageHeight!!) R.drawable.arrowdown else R.drawable.arrowup
             )
         }
 
@@ -251,11 +263,10 @@ fun GenerateAnswers(
         Column {
             FlippableCardContainer(
                 pokemonModel!!.averageWeight.toString(), 3000,
-                if (pokemonModel.averageWeight == TemporaryDatabase.todayPokemon.averageWeight) Color.Green else Color.Red,
-                iconUpOrDown = if (pokemonModel.averageWeight!! > TemporaryDatabase.todayPokemon.averageWeight!!) R.drawable.arrowdown else R.drawable.arrowup
+                if (pokemonModel.averageWeight == todayPokemon?.averageWeight) Color.Green else Color.Red,
+                iconUpOrDown = if (pokemonModel.averageWeight!! > todayPokemon?.averageWeight!!) R.drawable.arrowdown else R.drawable.arrowup
             )
         }
-//        }
     }
 }
 
@@ -315,13 +326,13 @@ fun GuessPokemonEditText(
     }
 }
 
-fun checkContains(typeList: List<String>): Color {
+fun checkContains(typeList: List<String>, todayPokemon: PokemonModel?): Color {
     var containsAny = false
     var containsAll = true
 
 
     for (typeInGuessedPokemon in typeList) {
-        if (typeInGuessedPokemon in TemporaryDatabase.todayPokemon.typeList!!) {
+        if (typeInGuessedPokemon in todayPokemon?.typeList!!) {
             containsAny = true
         } else {
             containsAll = false

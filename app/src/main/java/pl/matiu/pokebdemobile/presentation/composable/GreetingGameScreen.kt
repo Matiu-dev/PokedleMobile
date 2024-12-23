@@ -1,7 +1,6 @@
 package pl.matiu.pokebdemobile.presentation.composable
 
 import android.util.Log
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,26 +10,18 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import org.koin.java.KoinJavaComponent.inject
-import pl.matiu.pokebdemobile.data.repository.PokemonRepositoryImpl
-import pl.matiu.pokebdemobile.domain.TemporaryDatabase
-import pl.matiu.pokebdemobile.domain.pokemonNames
 import pl.matiu.pokebdemobile.presentation.PokemonViewModel
-import kotlin.random.Random
 
 data class GreetingGameScreen(val modifier: Modifier):  Screen{
     @Composable
@@ -66,6 +57,7 @@ data class GreetingGameScreen(val modifier: Modifier):  Screen{
     fun StartGameScreen(pokemonViewModel: PokemonViewModel) {
 
         val scope = rememberCoroutineScope()
+        val context = LocalContext.current
 
         Column(modifier = modifier) {
             Button(
@@ -74,7 +66,7 @@ data class GreetingGameScreen(val modifier: Modifier):  Screen{
                     .padding(10.dp),
                 onClick = {
                     scope.launch {
-                        pokemonViewModel.choosePokemonToGuess().join()
+                        pokemonViewModel.choosePokemonToGuess(context = context).join()
                     }
                 }
             ) {

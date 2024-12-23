@@ -3,6 +3,7 @@ package pl.matiu.pokebdemobile.data.di
 import androidx.room.Room
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
+import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 import pl.matiu.pokebdemobile.data.api.PokeApi
 import org.koin.core.module.dsl.viewModelOf

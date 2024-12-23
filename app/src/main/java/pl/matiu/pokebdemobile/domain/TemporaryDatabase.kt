@@ -58,19 +58,3 @@ val pokemonNames = listOf(
     "dratini", "dragonair", "dragonite",
     "mewtwo", "mew"
 )
-
-class TemporaryDatabase {
-
-    companion object {
-        lateinit var todayPokemon: PokemonModel
-    }
-
-    suspend fun generateRandomPokemon() {
-
-        val pokemonRepository: PokemonRepositoryImpl by inject(PokemonRepositoryImpl::class.java)
-        todayPokemon = pokemonRepository.getPokemonByName(name = pokemonNames[(Random.nextInt(0, pokemonNames.size))])
-
-    }
-
-
-}

@@ -1,7 +1,7 @@
 package pl.matiu.pokebdemobile.domain
 
-interface PokemonRepository {
-//    suspend fun getPokemonData(pokemonName: String): PokemonModel
+import pl.matiu.pokebdemobile.domain.entity.PokemonModel
 
-//    suspend fun getPokemonDataAsString(pokemonName: String): String
+interface PokemonRepository {
+    suspend fun getPokemonByName(name: String): PokemonModel
 }
