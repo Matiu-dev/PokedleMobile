@@ -1,6 +1,7 @@
 package pl.matiu.pokebdemobile.presentation.composable
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,6 +23,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import kotlinx.coroutines.launch
 import pl.matiu.pokebdemobile.presentation.PokemonViewModel
+import pl.matiu.pokebdemobile.presentation.composable.service.LoadingState
 
 data class GreetingGameScreen(val modifier: Modifier):  Screen{
     @Composable
@@ -48,13 +50,18 @@ data class GreetingGameScreen(val modifier: Modifier):  Screen{
                 navigator.push(GameScreen(modifier, navigator = navigator))
             }
             LoadingState.ERROR_LOADING -> {
+                StartGameScreen(pokemonViewModel = pokemonViewModel, errorLoading = true)
                 Log.d("PokemonModel", "error_loading")
             }
         }
     }
 
     @Composable
-    fun StartGameScreen(pokemonViewModel: PokemonViewModel) {
+    fun StartGameScreen(pokemonViewModel: PokemonViewModel, errorLoading: Boolean = false) {
+
+        if(errorLoading) {
+            Toast.makeText(LocalContext.current, "Błąd wczytywania pokemona", Toast.LENGTH_SHORT).show()
+        }
 
         val scope = rememberCoroutineScope()
         val context = LocalContext.current

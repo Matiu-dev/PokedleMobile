@@ -1,9 +1,7 @@
 package pl.matiu.pokebdemobile.presentation.composable
 
-
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,10 +22,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
@@ -45,7 +41,10 @@ import pl.matiu.pokebdemobile.R
 import pl.matiu.pokebdemobile.domain.entity.PokemonModel
 import pl.matiu.pokebdemobile.domain.pokemonNames
 import pl.matiu.pokebdemobile.presentation.PokemonViewModel
+import pl.matiu.pokebdemobile.presentation.composable.service.GuessPokemonState
+import java.io.Console
 
+//TODO na tym ekranie sprawdzanie czy jest internet w trakcie pobierania pokemona z bazy danych
 data class GameScreen(val modifier: Modifier, val navigator: Navigator) : Screen {
 
     @Composable
@@ -53,13 +52,14 @@ data class GameScreen(val modifier: Modifier, val navigator: Navigator) : Screen
 
         val context = LocalContext.current
         val state = rememberLazyListState()
-        val scope = rememberCoroutineScope()
 
         var pokemonName by rememberSaveable { mutableStateOf("") }
 
         val pokemonViewModel: PokemonViewModel = viewModel()
         val listOfGuessedPokemon = pokemonViewModel.pokemonModel.collectAsState()
         var todayPokemon by remember { mutableStateOf<PokemonModel?>(null) }
+        var guessPokemonState by remember { mutableStateOf<GuessPokemonState?>(null) }
+
         LaunchedEffect(null) {
             runBlocking {
                 todayPokemon = pokemonViewModel.getTodayPokemonModel(context = context)
@@ -85,7 +85,6 @@ data class GameScreen(val modifier: Modifier, val navigator: Navigator) : Screen
             EndGameDialog(numberOfShots = listOfGuessedPokemon.value.size, modifier = modifier)
         }
 
-
         LaunchedEffect(listOfGuessedPokemon) {
             snapshotFlow { state.firstVisibleItemIndex }
                 .collect {
@@ -103,27 +102,41 @@ data class GameScreen(val modifier: Modifier, val navigator: Navigator) : Screen
             Row(modifier = Modifier.fillMaxWidth()) {
                 Button(
                     onClick = {
-                        if (isPokemonExist(pokemonName)) {
-                            if (!isPokemonSelected(listOfGuessedPokemon.value, pokemonName)) {
+                        checkGuessPokemonState(pokemonName = pokemonName, todayPokemon = todayPokemon,
+                            listOfGuessedPokemon = listOfGuessedPokemon.value,
+                            onGuessPokemonStateChange = {
+                                guessPokemonState = it
+                            }
+                        )
+
+                        when(guessPokemonState) {
+                            GuessPokemonState.SUCCESS -> {
+
                                 pokemonViewModel.getPokemonInfo(pokemonName = pokemonName, context = context)
-                                if (pokemonName == todayPokemon?.name) {
-                                    Toast.makeText(
-                                        context,
-                                        "Udało Ci się zgadnąć. Dzisiejszy pokemon to ${pokemonName}.",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
+                                endGame.value = true
 
+                                Toast.makeText(
+                                    context,
+                                    "Udało Ci się zgadnąć. Dzisiejszy pokemon to ${pokemonName}.",
+                                    Toast.LENGTH_SHORT
+                                ).show()
 
-                                    endGame.value = true
+                            }
+                            GuessPokemonState.FAILURE -> {
 
-                                } else {
-                                    Toast.makeText(
-                                        context,
-                                        "Nie trafiłeś tym razem. Spróbuj ponownie.",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-                            } else {
+                                pokemonViewModel.getPokemonInfo(pokemonName = pokemonName, context = context)
+
+                                Toast.makeText(
+                                    context,
+                                    "Nie trafiłeś tym razem. Spróbuj ponownie.",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                            GuessPokemonState.POKEMON_NOT_EXIST -> {
+                                Toast.makeText(context, "Nie ma takiego pokemona.", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+                            GuessPokemonState.POKEMON_CHECKED -> {
                                 Toast.makeText(
                                     context,
                                     "Sprawdziłeś już tego pokemona.",
@@ -131,9 +144,7 @@ data class GameScreen(val modifier: Modifier, val navigator: Navigator) : Screen
                                 )
                                     .show()
                             }
-                        } else {
-                            Toast.makeText(context, "Nie ma takiego pokemona.", Toast.LENGTH_SHORT)
-                                .show()
+                            null -> Log.d("PokemonModel", "nullem jestem")
                         }
                     },
                     modifier = Modifier
@@ -170,6 +181,30 @@ data class GameScreen(val modifier: Modifier, val navigator: Navigator) : Screen
 
             }
 
+        }
+    }
+}
+
+fun checkGuessPokemonState(pokemonName: String,
+                           todayPokemon: PokemonModel?,
+                           listOfGuessedPokemon:List<PokemonModel>,
+                           onGuessPokemonStateChange: (GuessPokemonState) -> Unit
+) {
+    when {
+        !isPokemonExist(pokemonName) -> {
+            onGuessPokemonStateChange(GuessPokemonState.POKEMON_NOT_EXIST)
+        }
+
+        isPokemonSelected(guessedPokemonList = listOfGuessedPokemon, pokemonName = pokemonName) -> {
+            onGuessPokemonStateChange(GuessPokemonState.POKEMON_CHECKED)
+        }
+
+        pokemonName == todayPokemon?.name -> {
+            onGuessPokemonStateChange(GuessPokemonState.SUCCESS)
+        }
+
+        else -> {
+            onGuessPokemonStateChange(GuessPokemonState.FAILURE)
         }
     }
 }

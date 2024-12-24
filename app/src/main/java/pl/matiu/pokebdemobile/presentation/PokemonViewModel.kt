@@ -2,13 +2,10 @@ package pl.matiu.pokebdemobile.presentation
 
 import android.content.Context
 import android.util.Log
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,7 +17,7 @@ import pl.matiu.pokebdemobile.data.repository.PokemonShotsRepositoryImpl
 import pl.matiu.pokebdemobile.domain.entity.PokemonModel
 import pl.matiu.pokebdemobile.domain.pokemonNames
 import pl.matiu.pokebdemobile.domain.sharedPrefs.TodayPokemonSharedPrefs
-import pl.matiu.pokebdemobile.presentation.composable.LoadingState
+import pl.matiu.pokebdemobile.presentation.composable.service.LoadingState
 import kotlin.random.Random
 
 class PokemonViewModel : ViewModel() {
@@ -104,7 +101,7 @@ class PokemonViewModel : ViewModel() {
 
                 _isLoading.value = LoadingState.AFTER_LOADING
             } catch (e: Exception) {
-                _isLoading.value = LoadingState.BEFORE_LOADING
+                _isLoading.value = LoadingState.ERROR_LOADING
                 Log.d("PokemonModel", "Error: $e")
             }
         }

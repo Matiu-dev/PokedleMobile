@@ -1,11 +1,5 @@
 package pl.matiu.pokebdemobile.domain
 
-import org.koin.java.KoinJavaComponent.inject
-import pl.matiu.pokebdemobile.data.repository.PokemonRepositoryImpl
-import pl.matiu.pokebdemobile.domain.entity.PokemonModel
-import kotlin.random.Random
-
-
 val pokemonNames = listOf(
     "bulbasaur", "ivysaur", "venusaur",
     "charmander", "charmeleon", "charizard",
@@ -16,8 +10,8 @@ val pokemonNames = listOf(
     "rattata", "raticate", "spearow",
     "fearow", "ekans", "arbok",
     "pikachu", "raichu", "sandshrew",
-    "sandslash", "nidoran♀", "nidorina",
-    "nidoqueen", "nidoran♂", "nidorino",
+    "sandslash", "nidoran-f", "nidorina",
+    "nidoqueen", "nidoran-m", "nidorino",
     "nidoking", "clefairy", "clefable",
     "vulpix", "ninetales", "jigglypuff",
     "wigglytuff", "zubat", "golbat",
@@ -34,7 +28,7 @@ val pokemonNames = listOf(
     "tentacruel", "geodude", "graveler",
     "golem", "ponyta", "rapidash",
     "slowpoke", "slowbro", "magnemite",
-    "magneton", "farfetch'd", "doduo",
+    "magneton", "farfetchd", "doduo",
     "dodrio", "seel", "dewgong",
     "grimer", "muk", "shellder",
     "cloyster", "gastly", "haunter",
