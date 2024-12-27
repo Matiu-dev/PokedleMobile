@@ -51,7 +51,6 @@ data class GreetingGameScreen(val modifier: Modifier):  Screen{
             }
             LoadingState.ERROR_LOADING -> {
                 StartGameScreen(pokemonViewModel = pokemonViewModel, errorLoading = true)
-                Log.d("PokemonModel", "error_loading")
             }
         }
     }

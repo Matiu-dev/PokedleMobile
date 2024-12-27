@@ -1,20 +1,22 @@
 package pl.matiu.pokebdemobile.presentation.composable
 
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -27,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -36,19 +39,20 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.Navigator
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import pl.matiu.pokebdemobile.R
 import pl.matiu.pokebdemobile.domain.entity.PokemonModel
-import pl.matiu.pokebdemobile.domain.pokemonNames
 import pl.matiu.pokebdemobile.presentation.PokemonViewModel
+import pl.matiu.pokebdemobile.presentation.composable.service.GameScreenService
 import pl.matiu.pokebdemobile.presentation.composable.service.GuessPokemonState
-import java.io.Console
+import pl.matiu.pokebdemobile.presentation.composable.service.LoadingState
 
 //TODO na tym ekranie sprawdzanie czy jest internet w trakcie pobierania pokemona z bazy danych
 data class GameScreen(val modifier: Modifier, val navigator: Navigator) : Screen {
 
     @Composable
     override fun Content() {
+
+        val gameScreenService = GameScreenService()
 
         val context = LocalContext.current
         val state = rememberLazyListState()
@@ -57,15 +61,14 @@ data class GameScreen(val modifier: Modifier, val navigator: Navigator) : Screen
 
         val pokemonViewModel: PokemonViewModel = viewModel()
         val listOfGuessedPokemon = pokemonViewModel.pokemonModel.collectAsState()
-        var todayPokemon by remember { mutableStateOf<PokemonModel?>(null) }
+        val todayPokemon = pokemonViewModel.todayPokemonModel.collectAsState()
+        val isLoading = pokemonViewModel.isLoading.collectAsState()
+
         var guessPokemonState by remember { mutableStateOf<GuessPokemonState?>(null) }
 
-        LaunchedEffect(null) {
-            runBlocking {
-                todayPokemon = pokemonViewModel.getTodayPokemonModel(context = context)
-            }
+        LaunchedEffect(Unit) {
+            pokemonViewModel.getTodayPokemonModel(context = context)
         }
-
 
         val endGame = rememberSaveable { mutableStateOf(false) }
         val showDialog = rememberSaveable { mutableStateOf(false) }
@@ -80,7 +83,6 @@ data class GameScreen(val modifier: Modifier, val navigator: Navigator) : Screen
             }
         }
 
-        Log.d("show dialog", showDialog.toString())
         if (showDialog.value) {
             EndGameDialog(numberOfShots = listOfGuessedPokemon.value.size, modifier = modifier)
         }
@@ -92,136 +94,92 @@ data class GameScreen(val modifier: Modifier, val navigator: Navigator) : Screen
                 }
         }
 
-        Column(modifier = modifier) {
+        when(isLoading.value) {
+            LoadingState.AFTER_LOADING -> {
+                Column(modifier = modifier) {
 
-            GuessPokemonEditText(
-                pokemonName = pokemonName,
-                onPokemonNameChange = { pokemonName = it }
-            )
+                    GuessPokemonEditText(
+                        pokemonName = pokemonName,
+                        onPokemonNameChange = { pokemonName = it }
+                    )
 
-            Row(modifier = Modifier.fillMaxWidth()) {
-                Button(
-                    onClick = {
-                        checkGuessPokemonState(pokemonName = pokemonName, todayPokemon = todayPokemon,
-                            listOfGuessedPokemon = listOfGuessedPokemon.value,
-                            onGuessPokemonStateChange = {
-                                guessPokemonState = it
-                            }
-                        )
-
-                        when(guessPokemonState) {
-                            GuessPokemonState.SUCCESS -> {
-
-                                pokemonViewModel.getPokemonInfo(pokemonName = pokemonName, context = context)
-                                endGame.value = true
-
-                                Toast.makeText(
-                                    context,
-                                    "Udało Ci się zgadnąć. Dzisiejszy pokemon to ${pokemonName}.",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-
-                            }
-                            GuessPokemonState.FAILURE -> {
-
-                                pokemonViewModel.getPokemonInfo(pokemonName = pokemonName, context = context)
-
-                                Toast.makeText(
-                                    context,
-                                    "Nie trafiłeś tym razem. Spróbuj ponownie.",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
-                            GuessPokemonState.POKEMON_NOT_EXIST -> {
-                                Toast.makeText(context, "Nie ma takiego pokemona.", Toast.LENGTH_SHORT)
-                                    .show()
-                            }
-                            GuessPokemonState.POKEMON_CHECKED -> {
-                                Toast.makeText(
-                                    context,
-                                    "Sprawdziłeś już tego pokemona.",
-                                    Toast.LENGTH_SHORT
+                    Row(modifier = Modifier.fillMaxWidth()) {
+                        Button(
+                            onClick = {
+                                gameScreenService.checkGuessPokemonState(pokemonName = pokemonName,
+                                    todayPokemon = todayPokemon.value,
+                                    listOfGuessedPokemon = listOfGuessedPokemon.value,
+                                    onGuessPokemonStateChange = {
+                                        guessPokemonState = it
+                                    }
                                 )
-                                    .show()
-                            }
-                            null -> Log.d("PokemonModel", "nullem jestem")
+
+                                gameScreenService.handlePokemonGuessState(
+                                    context = context,
+                                    pokemonName = pokemonName,
+                                    pokemonViewModel = pokemonViewModel,
+                                    guessPokemonState = guessPokemonState,
+                                    onEndGameChange = { endGame.value = it }
+                                )
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 10.dp)
+                                .padding(horizontal = 10.dp)
+                        ) {
+                            Text(text = "Sprawdź")
                         }
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 10.dp)
-                        .padding(horizontal = 10.dp)
-                ) {
-                    Text(text = "Sprawdź")
-                }
-            }
+                    }
 
-            LazyColumn(state = state, modifier = Modifier.padding(5.dp)) {
-                if (listOfGuessedPokemon.value != null) {
-                    items(
-                        listOfGuessedPokemon.value!!.reversed(), key = { it.hashCode() }
-                    ) { pokemonModel ->
-                        if (listOfGuessedPokemon.value!!.size > 1) {
-                            HorizontalDivider(
-                                thickness = 2.dp,
-                                color = Color.Black,
-                                modifier = Modifier.padding(
-                                    horizontal = 15.dp,
-                                    vertical = 15.dp
+                    LazyColumn(state = state, modifier = Modifier.padding(5.dp)) {
+                        items(
+                            listOfGuessedPokemon.value.reversed(), key = { it.hashCode() }
+                        ) { pokemonModel ->
+                            if (listOfGuessedPokemon.value.size > 1) {
+                                HorizontalDivider(
+                                    thickness = 2.dp,
+                                    color = Color.Black,
+                                    modifier = Modifier.padding(
+                                        horizontal = 15.dp,
+                                        vertical = 15.dp
+                                    )
                                 )
+                            }
+
+                            GenerateAnswers(
+                                pokemonModel = pokemonModel,
+                                todayPokemon = todayPokemon.value,
+                                gameScreenService = gameScreenService
                             )
                         }
-
-                        GenerateAnswers(
-                            pokemonModel = pokemonModel,
-                            todayPokemon = todayPokemon
-                        )
                     }
                 }
-
             }
 
+            LoadingState.BEFORE_LOADING -> LoadingScreen()
+            LoadingState.LOADING -> LoadingScreen()
+            LoadingState.ERROR_LOADING -> navigator.popAll()
         }
     }
 }
 
-fun checkGuessPokemonState(pokemonName: String,
-                           todayPokemon: PokemonModel?,
-                           listOfGuessedPokemon:List<PokemonModel>,
-                           onGuessPokemonStateChange: (GuessPokemonState) -> Unit
-) {
-    when {
-        !isPokemonExist(pokemonName) -> {
-            onGuessPokemonStateChange(GuessPokemonState.POKEMON_NOT_EXIST)
-        }
-
-        isPokemonSelected(guessedPokemonList = listOfGuessedPokemon, pokemonName = pokemonName) -> {
-            onGuessPokemonStateChange(GuessPokemonState.POKEMON_CHECKED)
-        }
-
-        pokemonName == todayPokemon?.name -> {
-            onGuessPokemonStateChange(GuessPokemonState.SUCCESS)
-        }
-
-        else -> {
-            onGuessPokemonStateChange(GuessPokemonState.FAILURE)
-        }
+@Composable
+fun LoadingScreen() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator()
     }
-}
-
-fun isPokemonExist(pokemonName: String): Boolean {
-    return pokemonNames.contains(pokemonName)
-}
-
-fun isPokemonSelected(guessedPokemonList: List<PokemonModel>, pokemonName: String): Boolean {
-    return guessedPokemonList.any { it.name == pokemonName }
 }
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun GenerateAnswers(
     pokemonModel: PokemonModel?,
-    todayPokemon: PokemonModel?
+    todayPokemon: PokemonModel?,
+    gameScreenService: GameScreenService
 ) {
 
     FlowRow(
@@ -230,7 +188,6 @@ fun GenerateAnswers(
             .padding(horizontal = 5.dp),
         horizontalArrangement = Arrangement.Center
     ) {
-//        items(1) { item ->
         Column {
             FlippableCardContainer(
                 pokemonModel!!.name.toString(),
@@ -238,8 +195,6 @@ fun GenerateAnswers(
                 if (pokemonModel.name == todayPokemon?.name) Color.Green else Color.Red
             )
         }
-
-//            Spacer(modifier = Modifier.padding(5.dp))
 
         var typeList = pokemonModel?.typeList!!
 
@@ -251,7 +206,7 @@ fun GenerateAnswers(
             Column {
                 FlippableCardContainer(
                     type, 1000,
-                    checkContains(typeList, todayPokemon)
+                    gameScreenService.checkContains(typeList, todayPokemon)
                 )
             }
         }
@@ -313,7 +268,7 @@ fun GuessPokemonEditText(
 
     //TODO po zmiane pokemonName sprawdzenie czy jakas nazwa pokemona sie pokrywa
     val pokemonNames = mutableListOf<String>()
-    val pattern = Regex("^${pokemonName}")
+    val pattern = Regex("^${pokemonName}")//TODO Missing closing bracket in character class near index 2
     pl.matiu.pokebdemobile.domain.pokemonNames.forEach {
         if(pattern.containsMatchIn(it) && pokemonName.isNotEmpty()) {
             pokemonNames.add(it)
@@ -348,43 +303,14 @@ fun GuessPokemonEditText(
             Row {
                 LazyColumn {
                     items(pokemonNames) {
-                        if(pokemonName != it) {
+                        if (pokemonName != it) {
                             Row(modifier = Modifier.clickable { onPokemonNameChange(it) }) {
                                 Text(text = it)
                             }
                         }
-
                     }
                 }
             }
         }
     }
-}
-
-fun checkContains(typeList: List<String>, todayPokemon: PokemonModel?): Color {
-    var containsAny = false
-    var containsAll = true
-
-
-    for (typeInGuessedPokemon in typeList) {
-        if (typeInGuessedPokemon in todayPokemon?.typeList!!) {
-            containsAny = true
-        } else {
-            containsAll = false
-        }
-    }
-
-    return if (containsAll) {
-        Color.Green
-    } else {
-        if (containsAny) {
-            Color.Yellow
-        } else {
-            Color.Red
-        }
-    }
-}
-
-enum class TypeContains() {
-    All, ANY, NONE
 }

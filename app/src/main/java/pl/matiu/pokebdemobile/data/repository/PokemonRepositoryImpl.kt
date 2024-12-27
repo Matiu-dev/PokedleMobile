@@ -16,15 +16,24 @@ class PokemonRepositoryImpl: PokemonRepository {
 
     private val pokeApi: PokeApi by inject(PokeApi::class.java)
     private val pokemonDao: PokemonDao by inject(PokemonDao::class.java)
-    private val pokemonShotsDao: PokemonShotsDao by inject(PokemonShotsDao::class.java)
 
-    override suspend fun getPokemonByName(name: String): PokemonModel {
-        if(pokemonDao.getPokemonByName(name) == null) {
-            Log.d("PokemonModel", "Downloading pokemon from API: $name")
-            addPokemonToLocalStorage(getPokemonData(name))
+    override suspend fun getPokemonByName(name: String): PokemonModel? {
+        val localPokemon = pokemonDao.getPokemonByName(name)
+        if(localPokemon == null) {
+            Log.d("PokemonModel", "Trying to download pokemon from API: $name")
+
+            try {
+                val pokemon = getPokemonData(name)
+                addPokemonToLocalStorage(pokemon)
+                Log.d("PokemonModel", "Successfully adding pokemon to local storage")
+                return pokemon
+            } catch (e:Exception) {
+                Log.d("PokemonModel", "Error while adding pokemon to local storage")
+                return null
+            }
         }
 
-        return pokemonDao.getPokemonByName(name)!!
+        return localPokemon
     }
 
     private suspend fun getPokemonData(pokemonName: String): PokemonModel {
