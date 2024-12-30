@@ -1,4 +1,4 @@
-package pl.matiu.pokebdemobile.presentation.composable
+package pl.matiu.pokebdemobile.presentation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
@@ -9,9 +9,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import pl.matiu.pokebdemobile.presentation.PokemonViewModel
 
 @Composable
 fun EndGameDialog(numberOfShots: Int, modifier: Modifier) {

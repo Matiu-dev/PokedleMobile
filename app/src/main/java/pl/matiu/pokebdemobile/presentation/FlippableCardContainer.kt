@@ -1,4 +1,4 @@
-package pl.matiu.pokebdemobile.presentation.composable
+package pl.matiu.pokebdemobile.presentation
 
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState

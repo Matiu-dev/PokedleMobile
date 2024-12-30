@@ -1,6 +1,5 @@
-package pl.matiu.pokebdemobile.presentation.composable
+package pl.matiu.pokebdemobile.presentation
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,8 +21,8 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import kotlinx.coroutines.launch
-import pl.matiu.pokebdemobile.presentation.PokemonViewModel
-import pl.matiu.pokebdemobile.presentation.composable.service.LoadingState
+import pl.matiu.pokebdemobile.presentation.viewmodel.GreetingPokemonViewModel
+import pl.matiu.pokebdemobile.presentation.service.LoadingState
 
 data class GreetingGameScreen(val modifier: Modifier):  Screen{
     @Composable
@@ -31,15 +30,15 @@ data class GreetingGameScreen(val modifier: Modifier):  Screen{
 
         val navigator = LocalNavigator.currentOrThrow
 
-        val pokemonViewModel: PokemonViewModel = remember {
-            PokemonViewModel()
+        val greetingPokemonViewModel: GreetingPokemonViewModel = remember {
+            GreetingPokemonViewModel()
         }
 
-        val isLoading = pokemonViewModel.isLoading.collectAsState()
+        val isLoading = greetingPokemonViewModel.isLoading.collectAsState()
 
         when(isLoading.value) {
             LoadingState.BEFORE_LOADING -> {
-                StartGameScreen(pokemonViewModel = pokemonViewModel)
+                StartGameScreen(greetingPokemonViewModel = greetingPokemonViewModel)
             }
 
             LoadingState.LOADING -> {
@@ -50,13 +49,13 @@ data class GreetingGameScreen(val modifier: Modifier):  Screen{
                 navigator.push(GameScreen(modifier, navigator = navigator))
             }
             LoadingState.ERROR_LOADING -> {
-                StartGameScreen(pokemonViewModel = pokemonViewModel, errorLoading = true)
+                StartGameScreen(greetingPokemonViewModel = greetingPokemonViewModel, errorLoading = true)
             }
         }
     }
 
     @Composable
-    fun StartGameScreen(pokemonViewModel: PokemonViewModel, errorLoading: Boolean = false) {
+    fun StartGameScreen(greetingPokemonViewModel: GreetingPokemonViewModel, errorLoading: Boolean = false) {
 
         if(errorLoading) {
             Toast.makeText(LocalContext.current, "Błąd wczytywania pokemona", Toast.LENGTH_SHORT).show()
@@ -72,7 +71,7 @@ data class GreetingGameScreen(val modifier: Modifier):  Screen{
                     .padding(10.dp),
                 onClick = {
                     scope.launch {
-                        pokemonViewModel.choosePokemonToGuess(context = context).join()
+                        greetingPokemonViewModel.choosePokemonToGuess(context = context).join()
                     }
                 }
             ) {

@@ -1,4 +1,4 @@
-package pl.matiu.pokebdemobile.presentation
+package pl.matiu.pokebdemobile.presentation.viewmodel
 
 import android.content.Context
 import android.util.Log
@@ -15,12 +15,10 @@ import org.koin.java.KoinJavaComponent.inject
 import pl.matiu.pokebdemobile.data.repository.PokemonRepositoryImpl
 import pl.matiu.pokebdemobile.data.repository.PokemonShotsRepositoryImpl
 import pl.matiu.pokebdemobile.domain.entity.PokemonModel
-import pl.matiu.pokebdemobile.domain.pokemonNames
 import pl.matiu.pokebdemobile.domain.sharedPrefs.TodayPokemonSharedPrefs
-import pl.matiu.pokebdemobile.presentation.composable.service.LoadingState
-import kotlin.random.Random
+import pl.matiu.pokebdemobile.presentation.service.LoadingState
 
-class PokemonViewModel : ViewModel() {
+class GameScreenViewModel : ViewModel() {
 
     private val pokemonRepository: PokemonRepositoryImpl by inject(PokemonRepositoryImpl::class.java)
     private val pokemonShotsRepository: PokemonShotsRepositoryImpl by inject(
@@ -37,6 +35,7 @@ class PokemonViewModel : ViewModel() {
     val isLoading = _isLoading.asStateFlow()
 
     init {
+        Log.d("GamePokemonModel", "inicjacja load pokemon shots")
         loadPokemonShoots()
     }
 
@@ -53,14 +52,13 @@ class PokemonViewModel : ViewModel() {
                         }
 
                     } catch (e: Exception) {
-                        Log.d("PokemonModel", "aaa")
+                        Log.d("GamePokemonModel", "aaa")
                     }
                 }
 
             }
         }
     }
-
 
     fun getPokemonInfo(pokemonName: String, context: Context) {
         viewModelScope.launch {
@@ -81,10 +79,10 @@ class PokemonViewModel : ViewModel() {
                             context = context,
                             todayPokemonName = ""
                         )
-                        Log.d("PokemonModel", "Clearing databases and today pokemon.")
+                        Log.d("GamePokemonModel", "Clearing databases and today pokemon.")
                     } else {
                         pokemonShotsRepository.addPokemonShot(pokemonResult)
-                        Log.d("PokemonModel", "Adding new pokemon to shots table.")
+                        Log.d("GamePokemonModel", "Adding new pokemon to shots table.")
                     }
 
                     _pokemonModel.value = _pokemonModel.value.plus(pokemonResult)
@@ -95,60 +93,22 @@ class PokemonViewModel : ViewModel() {
         }
     }
 
-    fun choosePokemonToGuess(context: Context) = viewModelScope.launch {
-        withContext(Dispatchers.IO) {
-            _isLoading.value = LoadingState.LOADING
-
-            if (TodayPokemonSharedPrefs().getTodayPokemon(context = context) == "") {
-                val todayPokemon = pokemonRepository.getPokemonByName(
-                    name = pokemonNames[Random.nextInt(
-                        0,
-                        pokemonNames.size - 1
-                    )]
-                )
-
-                if (todayPokemon != null) {
-                    todayPokemon.name?.let {
-                        TodayPokemonSharedPrefs().setTodayPokemon(
-                            context = context,
-                            todayPokemonName = todayPokemon.name.toString()
-                        )
-                    }
-
-                    Log.d("PokemonModel", "Today pokemon: " + todayPokemon.name.toString())
-                    _isLoading.value = LoadingState.AFTER_LOADING
-                } else {
-                    _isLoading.value = LoadingState.ERROR_LOADING
-                }
-
-            } else {
-                Log.d(
-                    "PokemonModel",
-                    "Today pokemon was selected: " + TodayPokemonSharedPrefs().getTodayPokemon(
-                        context = context
-                    )
-                )
-                _isLoading.value = LoadingState.AFTER_LOADING
-            }
-        }
-    }
-
     suspend fun getTodayPokemonModel(context: Context) {
         withContext(Dispatchers.IO) {
             _isLoading.value = LoadingState.LOADING
             try {
-                val pokemonDeffered = async(Dispatchers.IO) {
+                val pokemonDeferred = async(Dispatchers.IO) {
                     pokemonRepository.getPokemonByName(
                         TodayPokemonSharedPrefs().getTodayPokemon(context)
                     )
                 }
 
-                val pokemonResult = pokemonDeffered.await()
+                val pokemonResult = pokemonDeferred.await()
 
                 _todayPokemonModel.value = pokemonResult
                 _isLoading.value = LoadingState.AFTER_LOADING
             } catch (e: Exception) {
-                Log.d("PokemonModel", "Error getTodayPokemon: $e")
+                Log.d("GamePokemonModel", "Error getTodayPokemon: $e")
                 _isLoading.value = LoadingState.ERROR_LOADING
             }
         }

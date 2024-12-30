@@ -15,12 +15,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.SlideTransition
-import pl.matiu.pokebdemobile.presentation.composable.GreetingGameScreen
+import pl.matiu.pokebdemobile.presentation.GreetingGameScreen
 import pl.matiu.pokebdemobile.ui.theme.PokebdeMobileTheme
 
 class MainActivity : ComponentActivity() {

@@ -1,6 +1,5 @@
-package pl.matiu.pokebdemobile.presentation.composable
+package pl.matiu.pokebdemobile.presentation
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -41,12 +40,11 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import pl.matiu.pokebdemobile.R
 import pl.matiu.pokebdemobile.domain.entity.PokemonModel
-import pl.matiu.pokebdemobile.presentation.PokemonViewModel
-import pl.matiu.pokebdemobile.presentation.composable.service.GameScreenService
-import pl.matiu.pokebdemobile.presentation.composable.service.GuessPokemonState
-import pl.matiu.pokebdemobile.presentation.composable.service.LoadingState
+import pl.matiu.pokebdemobile.presentation.viewmodel.GameScreenViewModel
+import pl.matiu.pokebdemobile.presentation.service.GameScreenService
+import pl.matiu.pokebdemobile.presentation.service.GuessPokemonState
+import pl.matiu.pokebdemobile.presentation.service.LoadingState
 
-//TODO na tym ekranie sprawdzanie czy jest internet w trakcie pobierania pokemona z bazy danych
 data class GameScreen(val modifier: Modifier, val navigator: Navigator) : Screen {
 
     @Composable
@@ -59,15 +57,15 @@ data class GameScreen(val modifier: Modifier, val navigator: Navigator) : Screen
 
         var pokemonName by rememberSaveable { mutableStateOf("") }
 
-        val pokemonViewModel: PokemonViewModel = viewModel()
-        val listOfGuessedPokemon = pokemonViewModel.pokemonModel.collectAsState()
-        val todayPokemon = pokemonViewModel.todayPokemonModel.collectAsState()
-        val isLoading = pokemonViewModel.isLoading.collectAsState()
+        val gameScreenViewModel: GameScreenViewModel = viewModel()
+        val listOfGuessedPokemon = gameScreenViewModel.pokemonModel.collectAsState()
+        val todayPokemon = gameScreenViewModel.todayPokemonModel.collectAsState()
+        val isLoading = gameScreenViewModel.isLoading.collectAsState()
 
         var guessPokemonState by remember { mutableStateOf<GuessPokemonState?>(null) }
 
         LaunchedEffect(Unit) {
-            pokemonViewModel.getTodayPokemonModel(context = context)
+            gameScreenViewModel.getTodayPokemonModel(context = context)
         }
 
         val endGame = rememberSaveable { mutableStateOf(false) }
@@ -117,7 +115,7 @@ data class GameScreen(val modifier: Modifier, val navigator: Navigator) : Screen
                                 gameScreenService.handlePokemonGuessState(
                                     context = context,
                                     pokemonName = pokemonName,
-                                    pokemonViewModel = pokemonViewModel,
+                                    greetingPokemonViewModel = gameScreenViewModel,
                                     guessPokemonState = guessPokemonState,
                                     onEndGameChange = { endGame.value = it }
                                 )

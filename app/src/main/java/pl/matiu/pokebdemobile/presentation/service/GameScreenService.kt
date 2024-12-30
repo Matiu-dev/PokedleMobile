@@ -1,4 +1,4 @@
-package pl.matiu.pokebdemobile.presentation.composable.service
+package pl.matiu.pokebdemobile.presentation.service
 
 import android.content.Context
 import android.util.Log
@@ -6,7 +6,7 @@ import android.widget.Toast
 import androidx.compose.ui.graphics.Color
 import pl.matiu.pokebdemobile.domain.entity.PokemonModel
 import pl.matiu.pokebdemobile.domain.pokemonNames
-import pl.matiu.pokebdemobile.presentation.PokemonViewModel
+import pl.matiu.pokebdemobile.presentation.viewmodel.GameScreenViewModel
 
 class GameScreenService {
     fun checkGuessPokemonState(pokemonName: String,
@@ -41,12 +41,12 @@ class GameScreenService {
         return guessedPokemonList.any { it.name == pokemonName }
     }
 
-    fun handlePokemonGuessState(context: Context, pokemonName: String, pokemonViewModel: PokemonViewModel,
+    fun handlePokemonGuessState(context: Context, pokemonName: String, greetingPokemonViewModel: GameScreenViewModel,
                                 guessPokemonState: GuessPokemonState?, onEndGameChange: (Boolean) -> Unit) {
         when(guessPokemonState) {
             GuessPokemonState.SUCCESS -> {
 
-                pokemonViewModel.getPokemonInfo(pokemonName = pokemonName, context = context)
+                greetingPokemonViewModel.getPokemonInfo(pokemonName = pokemonName, context = context)
                 onEndGameChange(true)
 
                 Toast.makeText(
@@ -58,7 +58,7 @@ class GameScreenService {
             }
             GuessPokemonState.FAILURE -> {
 
-                pokemonViewModel.getPokemonInfo(pokemonName = pokemonName, context = context)
+                greetingPokemonViewModel.getPokemonInfo(pokemonName = pokemonName, context = context)
 
                 Toast.makeText(
                     context,
