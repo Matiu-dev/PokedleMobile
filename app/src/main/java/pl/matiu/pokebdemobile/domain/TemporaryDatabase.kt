@@ -40,7 +40,7 @@ val pokemonNames = listOf(
     "rhyhorn", "rhydon", "chansey",
     "tangela", "kangaskhan", "horsea",
     "seadra", "goldeen", "seaking",
-    "staryu", "starmie", "mr. mime",
+    "staryu", "starmie", "mr.mime",
     "scyther", "jynx", "electabuzz",
     "magmar", "pinsir", "tauros",
     "magikarp", "gyarados", "lapras",

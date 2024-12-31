@@ -1,5 +1,6 @@
 package pl.matiu.pokebdemobile.presentation
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,10 +16,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -44,6 +48,13 @@ import pl.matiu.pokebdemobile.presentation.viewmodel.GameScreenViewModel
 import pl.matiu.pokebdemobile.presentation.service.GameScreenService
 import pl.matiu.pokebdemobile.presentation.service.GuessPokemonState
 import pl.matiu.pokebdemobile.presentation.service.LoadingState
+import pl.matiu.pokebdemobile.ui.theme.dividerColor
+import pl.matiu.pokebdemobile.ui.theme.editTextBackground
+import pl.matiu.pokebdemobile.ui.theme.editTextHint
+import pl.matiu.pokebdemobile.ui.theme.editTextText
+import pl.matiu.pokebdemobile.ui.theme.mainScreenBackground
+import pl.matiu.pokebdemobile.ui.theme.mainScreenButtonBackground
+import pl.matiu.pokebdemobile.ui.theme.mainScreenButtonText
 
 data class GameScreen(val modifier: Modifier, val navigator: Navigator) : Screen {
 
@@ -94,7 +105,7 @@ data class GameScreen(val modifier: Modifier, val navigator: Navigator) : Screen
 
         when(isLoading.value) {
             LoadingState.AFTER_LOADING -> {
-                Column(modifier = modifier) {
+                Column(modifier = modifier.fillMaxSize().background(color = mainScreenBackground)) {
 
                     GuessPokemonEditText(
                         pokemonName = pokemonName,
@@ -123,9 +134,12 @@ data class GameScreen(val modifier: Modifier, val navigator: Navigator) : Screen
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(top = 10.dp)
-                                .padding(horizontal = 10.dp)
+                                .padding(horizontal = 10.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = mainScreenButtonBackground
+                            )
                         ) {
-                            Text(text = "Sprawdź")
+                            Text(text = "Sprawdź", color = mainScreenButtonText)
                         }
                     }
 
@@ -136,7 +150,7 @@ data class GameScreen(val modifier: Modifier, val navigator: Navigator) : Screen
                             if (listOfGuessedPokemon.value.size > 1) {
                                 HorizontalDivider(
                                     thickness = 2.dp,
-                                    color = Color.Black,
+                                    color = dividerColor,
                                     modifier = Modifier.padding(
                                         horizontal = 15.dp,
                                         vertical = 15.dp
@@ -161,16 +175,16 @@ data class GameScreen(val modifier: Modifier, val navigator: Navigator) : Screen
     }
 }
 
-@Composable
-fun LoadingScreen() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        CircularProgressIndicator()
-    }
-}
+//@Composable
+//fun LoadingScreen() {
+//    Box(
+//        modifier = Modifier
+//            .fillMaxSize(),
+//        contentAlignment = Alignment.Center
+//    ) {
+//        CircularProgressIndicator()
+//    }
+//}
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -240,7 +254,7 @@ fun GenerateAnswers(
 
         Column {
             FlippableCardContainer(
-                pokemonModel!!.averageHeight.toString(), 2500,
+                pokemonModel.averageHeight.toString(), 2500,
                 if (pokemonModel.averageHeight == todayPokemon?.averageHeight) Color.Green else Color.Red,
                 iconUpOrDown = if (pokemonModel.averageHeight!! > todayPokemon?.averageHeight!!) R.drawable.arrowdown else R.drawable.arrowup
             )
@@ -279,22 +293,30 @@ fun GuessPokemonEditText(
             .padding(10.dp)
             .padding(top = 10.dp)
     ) {
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = "wpisz nazwe", modifier = Modifier
-                    .padding(end = 5.dp)
-            )
-        }
 
+        Column(modifier = Modifier.fillMaxWidth()) {
 
-        Column(modifier = Modifier.weight(2f)) {
-
-            Row {
+            Row(modifier = Modifier.fillMaxWidth()) {
                 TextField(
                     value = pokemonName,
                     onValueChange = {
                         onPokemonNameChange(it)
                     },
+                    placeholder = {
+                        Text(text = "Wpisz nazwę pokemona")
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = editTextBackground,
+                        unfocusedContainerColor = editTextBackground,
+                        focusedTextColor = editTextText,
+                        unfocusedTextColor = editTextText,
+                        cursorColor = editTextText,
+                        focusedIndicatorColor = Color.Transparent,//linia z dołu textu
+                        unfocusedIndicatorColor = Color.Transparent,
+                        unfocusedLabelColor = Color.Transparent,//linia z dołu textfield
+                        focusedLabelColor = Color.Transparent
+                    )
                 )
             }
 
@@ -303,7 +325,7 @@ fun GuessPokemonEditText(
                     items(pokemonNames) {
                         if (pokemonName != it) {
                             Row(modifier = Modifier.clickable { onPokemonNameChange(it) }) {
-                                Text(text = it)
+                                Text(text = it, color = editTextText)
                             }
                         }
                     }

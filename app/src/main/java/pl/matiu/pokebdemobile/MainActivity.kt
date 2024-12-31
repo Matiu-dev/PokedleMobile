@@ -7,8 +7,13 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -21,6 +26,8 @@ import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.SlideTransition
 import pl.matiu.pokebdemobile.presentation.GreetingGameScreen
 import pl.matiu.pokebdemobile.ui.theme.PokebdeMobileTheme
+import pl.matiu.pokebdemobile.ui.theme.topBarBackground
+import pl.matiu.pokebdemobile.ui.theme.topBarTitle
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,29 +49,37 @@ fun Greeting() {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            TopAppBar(
+            CenterAlignedTopAppBar(
                 colors = topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    containerColor = topBarBackground,
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
                 title = {
-                    Text("Top app bar")
-                }
+                    Text("Pokedle Mobile", color = topBarTitle)
+                },
+//                navigationIcon = {
+//                    IconButton(onClick = { /* do something */ }) {
+//                        Icon(
+//                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+//                            contentDescription = "Localized description"
+//                        )
+//                    }
+//                }
             )
         },
-        bottomBar = {
-            BottomAppBar(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                contentColor = MaterialTheme.colorScheme.primary,
-            ) {
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    textAlign = TextAlign.Center,
-                    text = "Bottom app bar",
-                )
-            }
-        },
+//        bottomBar = {
+//            BottomAppBar(
+//                containerColor = MaterialTheme.colorScheme.primaryContainer,
+//                contentColor = MaterialTheme.colorScheme.primary,
+//            ) {
+//                Text(
+//                    modifier = Modifier
+//                        .fillMaxWidth(),
+//                    textAlign = TextAlign.Center,
+//                    text = "Bottom app bar",
+//                )
+//            }
+//        },
     ) { innerPadding ->
 
         Navigator(GreetingGameScreen(modifier = Modifier.padding(innerPadding))) { navigator ->

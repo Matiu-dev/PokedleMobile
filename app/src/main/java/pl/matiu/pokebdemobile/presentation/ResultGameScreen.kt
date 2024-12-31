@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,6 +22,10 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import pl.matiu.pokebdemobile.ui.theme.editTextText
+import pl.matiu.pokebdemobile.ui.theme.mainScreenBackground
+import pl.matiu.pokebdemobile.ui.theme.mainScreenButtonBackground
+import pl.matiu.pokebdemobile.ui.theme.mainScreenButtonText
 
 data class ResultGameScreen(val numberOfShots: Int, val modifier: Modifier) : Screen {
 
@@ -30,7 +35,9 @@ data class ResultGameScreen(val numberOfShots: Int, val modifier: Modifier) : Sc
         val navigator = LocalNavigator.currentOrThrow
 
         Column(
-            modifier = Modifier.fillMaxSize().padding(horizontal = 5.dp),
+            modifier = Modifier.fillMaxSize()
+                .background(color = mainScreenBackground)
+                .padding(horizontal = 5.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
@@ -38,13 +45,13 @@ data class ResultGameScreen(val numberOfShots: Int, val modifier: Modifier) : Sc
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
-                    .background(MaterialTheme.colorScheme.primaryContainer, shape = RoundedCornerShape(15.dp))
-                    .border(BorderStroke(2.dp, Color.Black), shape = RoundedCornerShape(15.dp))
-                    .padding(10.dp)
+//                    .background(MaterialTheme.colorScheme.primaryContainer, shape = RoundedCornerShape(15.dp))
+//                    .border(BorderStroke(2.dp, Color.Black), shape = RoundedCornerShape(15.dp))
+//                    .padding(10.dp)
 
             ) {
                 Row {
-                    Text(text = "Trafiłeś pokemona za $numberOfShots razem", color = Color.Black)
+                    Text(text = "Trafiłeś pokemona za $numberOfShots razem", color = editTextText)
                 }
 
                 Spacer(modifier = Modifier.padding(5.dp))
@@ -53,9 +60,12 @@ data class ResultGameScreen(val numberOfShots: Int, val modifier: Modifier) : Sc
                     Button(
                         onClick = {
                             navigator.popAll()
-                        }
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = mainScreenButtonBackground
+                        )
                     ) {
-                        Text(text = "Restart")
+                        Text(text = "Restart", color = mainScreenButtonText)
                     }
                 }
             }
