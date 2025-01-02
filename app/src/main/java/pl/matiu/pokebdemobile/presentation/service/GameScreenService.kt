@@ -1,6 +1,7 @@
 package pl.matiu.pokebdemobile.presentation.service
 
 import android.content.Context
+import android.net.ConnectivityManager
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.ui.graphics.Color
@@ -15,6 +16,7 @@ class GameScreenService {
                                onGuessPokemonStateChange: (GuessPokemonState) -> Unit
     ) {
         when {
+
             !isPokemonExist(pokemonName) -> {
                 onGuessPokemonStateChange(GuessPokemonState.POKEMON_NOT_EXIST)
             }
@@ -44,6 +46,7 @@ class GameScreenService {
     fun handlePokemonGuessState(context: Context, pokemonName: String, greetingPokemonViewModel: GameScreenViewModel,
                                 guessPokemonState: GuessPokemonState?, onEndGameChange: (Boolean) -> Unit) {
         when(guessPokemonState) {
+
             GuessPokemonState.SUCCESS -> {
 
                 greetingPokemonViewModel.getPokemonInfo(pokemonName = pokemonName, context = context)
@@ -56,20 +59,31 @@ class GameScreenService {
                 ).show()
 
             }
+
             GuessPokemonState.FAILURE -> {
 
-                greetingPokemonViewModel.getPokemonInfo(pokemonName = pokemonName, context = context)
+                if(!isInternetConnectionAvailable(context)) {
+                    Toast.makeText(
+                        context,
+                        "Nie masz dostępu do internetu.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    greetingPokemonViewModel.getPokemonInfo(pokemonName = pokemonName, context = context)
 
-                Toast.makeText(
-                    context,
-                    "Nie trafiłeś tym razem. Spróbuj ponownie.",
-                    Toast.LENGTH_SHORT
-                ).show()
+                    Toast.makeText(
+                        context,
+                        "Nie trafiłeś tym razem. Spróbuj ponownie.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             }
+
             GuessPokemonState.POKEMON_NOT_EXIST -> {
                 Toast.makeText(context, "Nie ma takiego pokemona.", Toast.LENGTH_SHORT)
                     .show()
             }
+
             GuessPokemonState.POKEMON_CHECKED -> {
                 Toast.makeText(
                     context,
@@ -78,8 +92,14 @@ class GameScreenService {
                 )
                     .show()
             }
+
             null -> Log.d("PokemonModel", "nullem jestem")
         }
+    }
+
+    private fun isInternetConnectionAvailable(context: Context): Boolean {
+        val internetStatus = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        return internetStatus.activeNetwork != null
     }
 
     fun checkContains(typeList: List<String>, todayPokemon: PokemonModel?): Color {
