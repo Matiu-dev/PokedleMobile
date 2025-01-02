@@ -49,15 +49,22 @@ class GameScreenService {
 
             GuessPokemonState.SUCCESS -> {
 
-                greetingPokemonViewModel.getPokemonInfo(pokemonName = pokemonName, context = context)
-                onEndGameChange(true)
+                if(!isInternetConnectionAvailable(context)) {
+                    Toast.makeText(
+                        context,
+                        "Nie masz dostępu do internetu.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    greetingPokemonViewModel.getPokemonInfo(pokemonName = pokemonName, context = context)
+                    onEndGameChange(true)
 
-                Toast.makeText(
-                    context,
-                    "Udało Ci się zgadnąć. Dzisiejszy pokemon to ${pokemonName}.",
-                    Toast.LENGTH_SHORT
-                ).show()
-
+                    Toast.makeText(
+                        context,
+                        "Udało Ci się zgadnąć. Dzisiejszy pokemon to ${pokemonName}.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             }
 
             GuessPokemonState.FAILURE -> {
