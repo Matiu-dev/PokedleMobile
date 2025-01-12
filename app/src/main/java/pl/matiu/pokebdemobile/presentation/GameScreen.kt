@@ -11,14 +11,17 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldColors
@@ -35,7 +38,9 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import cafe.adriel.voyager.core.screen.Screen
@@ -103,9 +108,13 @@ data class GameScreen(val modifier: Modifier, val navigator: Navigator) : Screen
                 }
         }
 
-        when(isLoading.value) {
+        when (isLoading.value) {
             LoadingState.AFTER_LOADING -> {
-                Column(modifier = modifier.fillMaxSize().background(color = mainScreenBackground)) {
+                Column(
+                    modifier = modifier
+                        .fillMaxSize()
+                        .background(color = mainScreenBackground)
+                ) {
 
                     GuessPokemonEditText(
                         pokemonName = pokemonName,
@@ -133,7 +142,6 @@ data class GameScreen(val modifier: Modifier, val navigator: Navigator) : Screen
                             },
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(top = 10.dp)
                                 .padding(horizontal = 10.dp),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = mainScreenButtonBackground
@@ -175,18 +183,6 @@ data class GameScreen(val modifier: Modifier, val navigator: Navigator) : Screen
     }
 }
 
-//@Composable
-//fun LoadingScreen() {
-//    Box(
-//        modifier = Modifier
-//            .fillMaxSize(),
-//        contentAlignment = Alignment.Center
-//    ) {
-//        CircularProgressIndicator()
-//    }
-//}
-
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun GenerateAnswers(
     pokemonModel: PokemonModel?,
@@ -194,80 +190,73 @@ fun GenerateAnswers(
     gameScreenService: GameScreenService
 ) {
 
-    FlowRow(
+    LazyRow(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 5.dp),
         horizontalArrangement = Arrangement.Center
     ) {
-        Column {
-            FlippableCardContainer(
-                pokemonModel!!.name.toString(),
-                500,
-                if (pokemonModel.name == todayPokemon?.name) Color.Green else Color.Red
-            )
-        }
+        item {
+            Column {
+                FlippableCardContainer(
+                    pokemonModel!!.name.toString(),
+                    500,
+                    if (pokemonModel.name == todayPokemon?.name) Color.Green else Color.Red
+                )
+            }
 
-        var typeList = pokemonModel?.typeList!!
+            var typeList = pokemonModel?.typeList!!
 
 
-        for (type in typeList) {
+            for (type in typeList) {
+
+                Spacer(modifier = Modifier.padding(5.dp))
+
+                Column {
+                    FlippableCardContainer(
+                        type, 1000,
+                        gameScreenService.checkContains(typeList, todayPokemon)
+                    )
+                }
+            }
 
             Spacer(modifier = Modifier.padding(5.dp))
 
             Column {
                 FlippableCardContainer(
-                    type, 1000,
-                    gameScreenService.checkContains(typeList, todayPokemon)
+                    pokemonModel.environment!!, 1500,
+                    if (pokemonModel.environment == todayPokemon?.environment) Color.Green else Color.Red
                 )
             }
-        }
 
-        Spacer(modifier = Modifier.padding(5.dp))
+            Spacer(modifier = Modifier.padding(5.dp))
 
-        Column {
-            FlippableCardContainer(
-                pokemonModel!!.environment!!, 1500,
-                if (pokemonModel.environment == todayPokemon?.environment) Color.Green else Color.Red
-            )
-        }
+            Column {
+                FlippableCardContainer(
+                    pokemonModel.color!!, 2000,
+                    if (pokemonModel.color == todayPokemon?.color) Color.Green else Color.Red
+                )
+            }
 
-        Spacer(modifier = Modifier.padding(5.dp))
+            Spacer(modifier = Modifier.padding(5.dp))
 
-        Column {
-            FlippableCardContainer(
-                pokemonModel!!.color!!, 2000,
-                if (pokemonModel.color == todayPokemon?.color) Color.Green else Color.Red
-            )
-        }
+            Column {
+                FlippableCardContainer(
+                    pokemonModel.averageHeight.toString(), 2500,
+                    if (pokemonModel.averageHeight == todayPokemon?.averageHeight) Color.Green else Color.Red,
+                    iconUpOrDown = if (pokemonModel.averageHeight!! > todayPokemon?.averageHeight!!) R.drawable.arrowdown else R.drawable.arrowup
+                )
+            }
 
-//            Spacer(modifier = Modifier.padding(5.dp))
+            Spacer(modifier = Modifier.padding(5.dp))
 
-//            Column {
-//                FlippableCardContainer(
-//                    pokemonModel!!.evolutionStage.toString(), 3000,
-//                    if (pokemonModel.evolutionStage == TemporaryDatabase.todayPokemon.evolutionStage) Color.Green else Color.Red
-//                )
-//            }
-
-        Spacer(modifier = Modifier.padding(5.dp))
-
-        Column {
-            FlippableCardContainer(
-                pokemonModel.averageHeight.toString(), 2500,
-                if (pokemonModel.averageHeight == todayPokemon?.averageHeight) Color.Green else Color.Red,
-                iconUpOrDown = if (pokemonModel.averageHeight!! > todayPokemon?.averageHeight!!) R.drawable.arrowdown else R.drawable.arrowup
-            )
-        }
-
-        Spacer(modifier = Modifier.padding(5.dp))
-
-        Column {
-            FlippableCardContainer(
-                pokemonModel!!.averageWeight.toString(), 3000,
-                if (pokemonModel.averageWeight == todayPokemon?.averageWeight) Color.Green else Color.Red,
-                iconUpOrDown = if (pokemonModel.averageWeight!! > todayPokemon?.averageWeight!!) R.drawable.arrowdown else R.drawable.arrowup
-            )
+            Column {
+                FlippableCardContainer(
+                    pokemonModel!!.averageWeight.toString(), 3000,
+                    if (pokemonModel.averageWeight == todayPokemon?.averageWeight) Color.Green else Color.Red,
+                    iconUpOrDown = if (pokemonModel.averageWeight!! > todayPokemon?.averageWeight!!) R.drawable.arrowdown else R.drawable.arrowup
+                )
+            }
         }
     }
 }
@@ -278,14 +267,20 @@ fun GuessPokemonEditText(
     onPokemonNameChange: (String) -> Unit,
 ) {
 
-    //TODO po zmiane pokemonName sprawdzenie czy jakas nazwa pokemona sie pokrywa
+    val density = LocalDensity.current
+
+    var columnHeightDp by remember {
+        mutableStateOf(0.dp)
+    }
+
     val pokemonNames = mutableListOf<String>()
-    val pattern = Regex("^${pokemonName}")//TODO Missing closing bracket in character class near index 2
+    val pattern = Regex("^${pokemonName}")
     pl.matiu.pokebdemobile.domain.pokemonNames.forEach {
-        if(pattern.containsMatchIn(it) && pokemonName.isNotEmpty()) {
+        if (pattern.containsMatchIn(it) && pokemonName.isNotEmpty() && it != pokemonName) {
             pokemonNames.add(it)
         }
     }
+
 
     Row(
         modifier = Modifier
@@ -303,7 +298,15 @@ fun GuessPokemonEditText(
                         onPokemonNameChange(it)
                     },
                     placeholder = {
-                        Text(text = "Wpisz nazwę pokemona")
+                        Text(
+                            text = "Wpisz nazwę pokemona",
+                            modifier = Modifier
+                                .onGloballyPositioned { coordinates ->
+                                    columnHeightDp = with(density) {
+                                        coordinates.size.height.toDp()
+                                    }
+                                }
+                        )
                     },
                     modifier = Modifier.fillMaxWidth(),
                     colors = TextFieldDefaults.colors(
@@ -312,22 +315,29 @@ fun GuessPokemonEditText(
                         focusedTextColor = editTextText,
                         unfocusedTextColor = editTextText,
                         cursorColor = editTextText,
-                        focusedIndicatorColor = Color.Transparent,//linia z dołu textu
+                        focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
-                        unfocusedLabelColor = Color.Transparent,//linia z dołu textfield
+                        unfocusedLabelColor = Color.Transparent,
                         focusedLabelColor = Color.Transparent
                     )
                 )
             }
 
-            Row {
-                LazyColumn {
-                    items(pokemonNames) {
-                        if (pokemonName != it) {
-                            Row(modifier = Modifier.clickable { onPokemonNameChange(it) }) {
-                                Text(text = it, color = editTextText)
-                            }
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 10.dp)
+                    .height(
+                        if(pokemonNames.size < 5) {
+                            columnHeightDp * pokemonNames.size
+                        } else {
+                            columnHeightDp * 5
                         }
+                    )
+            ) {
+                items(pokemonNames) {
+                    Row(modifier = Modifier.clickable { onPokemonNameChange(it) }) {
+                        Text(text = it, color = editTextText)
                     }
                 }
             }
