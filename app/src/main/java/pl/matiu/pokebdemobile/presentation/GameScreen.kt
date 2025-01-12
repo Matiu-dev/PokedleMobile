@@ -124,7 +124,8 @@ data class GameScreen(val modifier: Modifier, val navigator: Navigator) : Screen
                     Row(modifier = Modifier.fillMaxWidth()) {
                         Button(
                             onClick = {
-                                gameScreenService.checkGuessPokemonState(pokemonName = pokemonName,
+                                gameScreenService.checkGuessPokemonState(context = context,
+                                    pokemonName = pokemonName,
                                     todayPokemon = todayPokemon.value,
                                     listOfGuessedPokemon = listOfGuessedPokemon.value,
                                     onGuessPokemonStateChange = {

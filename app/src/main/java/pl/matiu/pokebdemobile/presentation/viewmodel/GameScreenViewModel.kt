@@ -63,31 +63,34 @@ class GameScreenViewModel : ViewModel() {
     fun getPokemonInfo(pokemonName: String, context: Context) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
+                try {
 
-                val pokemonDeferred = async(Dispatchers.IO) {
-                    pokemonRepository.getPokemonByName(name = pokemonName)
-                }
-
-                val pokemonResult = pokemonDeferred.await()
-
-                if (pokemonResult != null) {
-                    if (pokemonResult.name.toString() ==
-                        TodayPokemonSharedPrefs().getTodayPokemon(context)
-                    ) {
-                        pokemonShotsRepository.deleteAllDataAfterWin()
-                        TodayPokemonSharedPrefs().setTodayPokemon(
-                            context = context,
-                            todayPokemonName = ""
-                        )
-                        Log.d("GamePokemonModel", "Clearing databases and today pokemon.")
-                    } else {
-                        pokemonShotsRepository.addPokemonShot(pokemonResult)
-                        Log.d("GamePokemonModel", "Adding new pokemon to shots table.")
+                    val pokemonDeferred = async(Dispatchers.IO) {
+                        pokemonRepository.getPokemonByName(name = pokemonName)
                     }
 
-                    _pokemonModel.value = _pokemonModel.value.plus(pokemonResult)
-                }
+                    val pokemonResult = pokemonDeferred.await()
 
+                    if (pokemonResult != null) {
+                        if (pokemonResult.name.toString() ==
+                            TodayPokemonSharedPrefs().getTodayPokemon(context)
+                        ) {
+                            pokemonShotsRepository.deleteAllDataAfterWin()
+                            TodayPokemonSharedPrefs().setTodayPokemon(
+                                context = context,
+                                todayPokemonName = ""
+                            )
+                            Log.d("GamePokemonModel", "Clearing databases and today pokemon.")
+                        } else {
+                            pokemonShotsRepository.addPokemonShot(pokemonResult)
+                            Log.d("GamePokemonModel", "Adding new pokemon to shots table.")
+                        }
+
+                        _pokemonModel.value = _pokemonModel.value.plus(pokemonResult)
+                    }
+                } catch (e: Exception) {
+                    Log.d("PokemonModel", "exception $e")
+                }
 
             }
         }
