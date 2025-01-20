@@ -52,14 +52,6 @@ class GameScreenService {
         when(guessPokemonState) {
 
             GuessPokemonState.SUCCESS -> {
-
-//                if(!isInternetConnectionAvailable(context)) {
-//                    Toast.makeText(
-//                        context,
-//                        "Nie masz dostępu do internetu.",
-//                        Toast.LENGTH_SHORT
-//                    ).show()
-//                } else {
                     greetingPokemonViewModel.getPokemonInfo(pokemonName = pokemonName, context = context)
                     onEndGameChange(true)
 
@@ -68,18 +60,10 @@ class GameScreenService {
                         "Udało Ci się zgadnąć. Dzisiejszy pokemon to ${pokemonName}.",
                         Toast.LENGTH_SHORT
                     ).show()
-//                }
             }
 
             GuessPokemonState.FAILURE -> {
 
-//                if(!isInternetConnectionAvailable(context)) {
-//                    Toast.makeText(
-//                        context,
-//                        "Nie masz dostępu do internetu.",
-//                        Toast.LENGTH_SHORT
-//                    ).show()
-//                } else {
                     greetingPokemonViewModel.getPokemonInfo(pokemonName = pokemonName, context = context)
 
                     Toast.makeText(
@@ -87,7 +71,6 @@ class GameScreenService {
                         "Nie trafiłeś tym razem. Spróbuj ponownie.",
                         Toast.LENGTH_SHORT
                     ).show()
-//                }
             }
 
             GuessPokemonState.POKEMON_NOT_EXIST -> {
