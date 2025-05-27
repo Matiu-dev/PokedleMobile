@@ -3,10 +3,7 @@ package pl.matiu.pokebdemobile.presentation
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,12 +16,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -35,7 +29,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -55,7 +48,6 @@ import pl.matiu.pokebdemobile.presentation.service.GuessPokemonState
 import pl.matiu.pokebdemobile.presentation.service.LoadingState
 import pl.matiu.pokebdemobile.ui.theme.dividerColor
 import pl.matiu.pokebdemobile.ui.theme.editTextBackground
-import pl.matiu.pokebdemobile.ui.theme.editTextHint
 import pl.matiu.pokebdemobile.ui.theme.editTextText
 import pl.matiu.pokebdemobile.ui.theme.mainScreenBackground
 import pl.matiu.pokebdemobile.ui.theme.mainScreenButtonBackground
@@ -74,9 +66,7 @@ data class GameScreen(val modifier: Modifier, val navigator: Navigator) : Screen
         var pokemonName by rememberSaveable { mutableStateOf("") }
 
         val gameScreenViewModel: GameScreenViewModel = viewModel()
-        val listOfGuessedPokemon = gameScreenViewModel.pokemonModel.collectAsState()
-        val todayPokemon = gameScreenViewModel.todayPokemonModel.collectAsState()
-        val isLoading = gameScreenViewModel.isLoading.collectAsState()
+        val gameScreenState = gameScreenViewModel.gameScreenState.collectAsState()
 
         var guessPokemonState by remember { mutableStateOf<GuessPokemonState?>(null) }
 
@@ -98,17 +88,17 @@ data class GameScreen(val modifier: Modifier, val navigator: Navigator) : Screen
         }
 
         if (showDialog.value) {
-            EndGameDialog(numberOfShots = listOfGuessedPokemon.value.size, modifier = modifier)
+            EndGameDialog(numberOfShots = gameScreenState.value.pokemonModel.size, modifier = modifier)
         }
 
-        LaunchedEffect(listOfGuessedPokemon) {
+        LaunchedEffect(gameScreenState.value.pokemonModel) {
             snapshotFlow { state.firstVisibleItemIndex }
                 .collect {
                     state.scrollToItem(0)
                 }
         }
 
-        when (isLoading.value) {
+        when (gameScreenState.value.isLoading) {
             LoadingState.AFTER_LOADING -> {
                 Column(
                     modifier = modifier
@@ -126,8 +116,8 @@ data class GameScreen(val modifier: Modifier, val navigator: Navigator) : Screen
                             onClick = {
                                 gameScreenService.checkGuessPokemonState(context = context,
                                     pokemonName = pokemonName,
-                                    todayPokemon = todayPokemon.value,
-                                    listOfGuessedPokemon = listOfGuessedPokemon.value,
+                                    todayPokemon = gameScreenState.value.todayPokemonModel,
+                                    listOfGuessedPokemon = gameScreenState.value.pokemonModel,
                                     onGuessPokemonStateChange = {
                                         guessPokemonState = it
                                     }
@@ -154,9 +144,9 @@ data class GameScreen(val modifier: Modifier, val navigator: Navigator) : Screen
 
                     LazyColumn(state = state, modifier = Modifier.padding(5.dp)) {
                         items(
-                            listOfGuessedPokemon.value.reversed(), key = { it.hashCode() }
+                            gameScreenState.value.pokemonModel.reversed(), key = { it.hashCode() }
                         ) { pokemonModel ->
-                            if (listOfGuessedPokemon.value.size > 1) {
+                            if (gameScreenState.value.pokemonModel.size > 1) {
                                 HorizontalDivider(
                                     thickness = 2.dp,
                                     color = dividerColor,
@@ -169,7 +159,7 @@ data class GameScreen(val modifier: Modifier, val navigator: Navigator) : Screen
 
                             GenerateAnswers(
                                 pokemonModel = pokemonModel,
-                                todayPokemon = todayPokemon.value,
+                                todayPokemon = gameScreenState.value.todayPokemonModel,
                                 gameScreenService = gameScreenService
                             )
                         }

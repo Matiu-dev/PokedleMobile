@@ -7,14 +7,12 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.java.KoinJavaComponent.inject
 import pl.matiu.pokebdemobile.data.repository.PokemonRepositoryImpl
 import pl.matiu.pokebdemobile.data.repository.PokemonShotsRepositoryImpl
-import pl.matiu.pokebdemobile.domain.entity.PokemonModel
 import pl.matiu.pokebdemobile.domain.sharedPrefs.TodayPokemonSharedPrefs
 import pl.matiu.pokebdemobile.presentation.service.LoadingState
 
@@ -25,14 +23,8 @@ class GameScreenViewModel : ViewModel() {
         PokemonShotsRepositoryImpl::class.java
     )
 
-    private var _todayPokemonModel = MutableStateFlow<PokemonModel?>(null)
-    val todayPokemonModel: StateFlow<PokemonModel?> = _todayPokemonModel.asStateFlow()
-
-    private var _pokemonModel = MutableStateFlow<List<PokemonModel>>(emptyList())
-    val pokemonModel: StateFlow<List<PokemonModel>> = _pokemonModel.asStateFlow()
-
-    private var _isLoading = MutableStateFlow(LoadingState.BEFORE_LOADING)
-    val isLoading = _isLoading.asStateFlow()
+    private var _gameScreenState = MutableStateFlow(GameScreenState())
+    val gameScreenState = _gameScreenState.asStateFlow()
 
     init {
         Log.d("GamePokemonModel", "inicjacja load pokemon shots")
@@ -47,8 +39,7 @@ class GameScreenViewModel : ViewModel() {
                         val pokemonModel =
                             pokemonRepository.getPokemonByName(name = pokemonShot.name.toString())
                         if (pokemonModel != null) {
-                            _pokemonModel.value =
-                                _pokemonModel.value.plus(pokemonModel)
+                            _gameScreenState.value = _gameScreenState.value.copy(pokemonModel = _gameScreenState.value.pokemonModel + pokemonModel)
                         }
 
                     } catch (e: Exception) {
@@ -86,7 +77,7 @@ class GameScreenViewModel : ViewModel() {
                             Log.d("GamePokemonModel", "Adding new pokemon to shots table.")
                         }
 
-                        _pokemonModel.value = _pokemonModel.value.plus(pokemonResult)
+                        _gameScreenState.value = _gameScreenState.value.copy(pokemonModel = _gameScreenState.value.pokemonModel + pokemonResult)
                     }
                 } catch (e: Exception) {
                     Log.d("PokemonModel", "exception $e")
@@ -98,7 +89,7 @@ class GameScreenViewModel : ViewModel() {
 
     suspend fun getTodayPokemonModel(context: Context) {
         withContext(Dispatchers.IO) {
-            _isLoading.value = LoadingState.LOADING
+            _gameScreenState.value = _gameScreenState.value.copy(isLoading = LoadingState.LOADING)
             try {
                 val pokemonDeferred = async(Dispatchers.IO) {
                     pokemonRepository.getPokemonByName(
@@ -108,11 +99,11 @@ class GameScreenViewModel : ViewModel() {
 
                 val pokemonResult = pokemonDeferred.await()
 
-                _todayPokemonModel.value = pokemonResult
-                _isLoading.value = LoadingState.AFTER_LOADING
+                _gameScreenState.value = _gameScreenState.value.copy(todayPokemonModel = pokemonResult)
+                _gameScreenState.value = _gameScreenState.value.copy(isLoading = LoadingState.AFTER_LOADING)
             } catch (e: Exception) {
                 Log.d("GamePokemonModel", "Error getTodayPokemon: $e")
-                _isLoading.value = LoadingState.ERROR_LOADING
+                _gameScreenState.value = _gameScreenState.value.copy(isLoading = LoadingState.ERROR_LOADING)
             }
         }
     }

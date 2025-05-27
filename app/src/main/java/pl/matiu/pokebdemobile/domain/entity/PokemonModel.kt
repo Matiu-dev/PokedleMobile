@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 @Entity
 data class PokemonModel(
     @PrimaryKey(autoGenerate = true)
-    val id: Long,
+    val id: Long = -1,
     var name: String? = "",
     var typeList: List<String>? = mutableListOf(""),
     var color: String? = "",
