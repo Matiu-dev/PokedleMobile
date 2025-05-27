@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -29,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -175,12 +178,65 @@ data class GameScreen(val modifier: Modifier, val navigator: Navigator) : Screen
 }
 
 @Composable
+fun Header() {
+    LazyRow(
+        modifier = Modifier
+        .fillMaxWidth()
+        .padding(horizontal = 5.dp),
+        horizontalArrangement = Arrangement.Center
+    ) {
+        item {
+
+                Text(
+                    modifier = Modifier.height(100.dp).width(100.dp),
+                    text = "Name"
+                )
+
+                Text(
+                    modifier = Modifier.height(100.dp).width(100.dp),
+                    text = "Type 1"
+                )
+
+                Text(
+                    modifier = Modifier.height(100.dp).width(100.dp),
+                    text = "Type 2"
+                )
+
+                Text(
+                    modifier = Modifier.height(100.dp).width(100.dp),
+                    text = "Name"
+                )
+
+                Text(
+                    modifier = Modifier.height(100.dp).width(100.dp),
+                    text = "Name"
+                )
+
+                Text(
+                    modifier = Modifier.height(100.dp).width(100.dp),
+                    text = "Name"
+                )
+
+                Text(
+                    modifier = Modifier.height(100.dp).width(100.dp),
+                    text = "Name"
+                )
+
+                Text(
+                    modifier = Modifier.height(100.dp).width(100.dp),
+                    text = "Name"
+                )
+
+        }
+    }
+}
+
+@Composable
 fun GenerateAnswers(
     pokemonModel: PokemonModel?,
     todayPokemon: PokemonModel?,
     gameScreenService: GameScreenService
 ) {
-
     LazyRow(
         modifier = Modifier
             .fillMaxWidth()
@@ -188,7 +244,14 @@ fun GenerateAnswers(
         horizontalArrangement = Arrangement.Center
     ) {
         item {
-            Column {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    text = "Name"
+                )
+
                 FlippableCardContainer(
                     pokemonModel!!.name.toString(),
                     500,
@@ -203,7 +266,14 @@ fun GenerateAnswers(
 
                 Spacer(modifier = Modifier.padding(5.dp))
 
-                Column {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        text = "Type"
+                    )
+
                     FlippableCardContainer(
                         type, 1000,
                         gameScreenService.checkContains(typeList, todayPokemon)
@@ -213,7 +283,14 @@ fun GenerateAnswers(
 
             Spacer(modifier = Modifier.padding(5.dp))
 
-            Column {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    text = "Habitat"
+                )
+
                 FlippableCardContainer(
                     pokemonModel.environment!!, 1500,
                     if (pokemonModel.environment == todayPokemon?.environment) Color.Green else Color.Red
@@ -222,7 +299,14 @@ fun GenerateAnswers(
 
             Spacer(modifier = Modifier.padding(5.dp))
 
-            Column {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    text = "Color"
+                )
+
                 FlippableCardContainer(
                     pokemonModel.color!!, 2000,
                     if (pokemonModel.color == todayPokemon?.color) Color.Green else Color.Red
@@ -231,7 +315,30 @@ fun GenerateAnswers(
 
             Spacer(modifier = Modifier.padding(5.dp))
 
-            Column {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    text = "Is evolution"
+                )
+
+                FlippableCardContainer(
+                    if(pokemonModel.isFromEvolution) "True" else "False" , 2000,
+                    if (pokemonModel.isFromEvolution == todayPokemon?.isFromEvolution) Color.Green else Color.Red
+                )
+            }
+
+            Spacer(modifier = Modifier.padding(5.dp))
+
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    text = "Height"
+                )
+
                 FlippableCardContainer(
                     pokemonModel.averageHeight.toString(), 2500,
                     if (pokemonModel.averageHeight == todayPokemon?.averageHeight) Color.Green else Color.Red,
@@ -241,7 +348,14 @@ fun GenerateAnswers(
 
             Spacer(modifier = Modifier.padding(5.dp))
 
-            Column {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    text = "Width"
+                )
+
                 FlippableCardContainer(
                     pokemonModel!!.averageWeight.toString(), 3000,
                     if (pokemonModel.averageWeight == todayPokemon?.averageWeight) Color.Green else Color.Red,

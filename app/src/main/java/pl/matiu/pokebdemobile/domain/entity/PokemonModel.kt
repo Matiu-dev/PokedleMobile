@@ -15,5 +15,6 @@ data class PokemonModel(
     var averageHeight: Int? = -1,
     var averageWeight: Int? = -1,
     var isLegendary: Boolean = false,
-    var isMythical: Boolean = false
+    var isMythical: Boolean = false,
+    var isFromEvolution: Boolean = false
 )

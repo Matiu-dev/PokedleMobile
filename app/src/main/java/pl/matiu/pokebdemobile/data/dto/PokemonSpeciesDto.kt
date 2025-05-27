@@ -1,18 +1,18 @@
 package pl.matiu.pokebdemobile.data.dto
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import com.google.gson.annotations.SerializedName
 
-@Serializable
 data class PokemonSpeciesDto(
-    @SerialName("color")
+    @SerializedName("color")
     val color: Color,
-    @SerialName("name")
+    @SerializedName("name")
     val name: String,
-    @SerialName("is_legendary")
+    @SerializedName("is_legendary")
     val isLegendary: Boolean,
-    @SerialName("is_mythical")
+    @SerializedName("is_mythical")
     val isMythical: Boolean,
-    @SerialName("habitat")
-    val habitat: Habitat
+    @SerializedName("habitat")
+    val habitat: Habitat,
+    @SerializedName("evolves_from_species")
+    val evolveFromSpecies: EvolveFromSpecies? = null
 )
