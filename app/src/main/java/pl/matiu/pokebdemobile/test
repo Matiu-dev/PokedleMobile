@@ -1,0 +1,24 @@
+    private suspend fun getPokemonData(pokemonName: String): PokemonModel {
+
+        val gson = Gson()
+//        val pokemonDataResponse = PokemonModel(id = 0)
+//
+//        val pokemonSpeciesDto = gson.fromJson(
+//            pokeApi.getPokemonSpeciesDataAsString(pokemonName = pokemonName),
+//            PokemonSpeciesDto::class.java)
+//        pokemonSpeciesDto.toPokemonModel(pokemonDataResponse)
+//
+//        val pokemonDto = gson.fromJson(
+//            pokeApi.getPokemonDataAsString(pokemonName = pokemonName),
+//            PokemonDto::class.java)
+//        pokemonDto.toPokemonModel(pokemonDataResponse = pokemonDataResponse)
+
+//        return pokemonDataResponse
+
+        val pokemonData = gson.fromJson(
+            pokeApi.getPokemonModel(pokemonName = pokemonName),
+            PokemonModel::class.java
+        )
+
+        return pokemonData
+    }
