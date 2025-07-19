@@ -11,6 +11,7 @@ fun PokemonSpeciesDto.toPokemonModel(pokemonDataResponse: PokemonModel) {
     pokemonDataResponse.environment = habitat.name
     pokemonDataResponse.isLegendary = isLegendary
     pokemonDataResponse.isMythical = isMythical
+    pokemonDataResponse.isFromEvolution = evolveFromSpecies != null
 }
 
 fun PokemonDto.toPokemonModel(pokemonDataResponse: PokemonModel) {
