@@ -249,6 +249,7 @@ fun GenerateAnswers(
                 Text(
                     modifier = Modifier
                         .fillMaxWidth(),
+                    color = Color.White,
                     text = "Name"
                 )
 
@@ -271,6 +272,7 @@ fun GenerateAnswers(
                     Text(
                         modifier = Modifier
                             .fillMaxWidth(),
+                        color = Color.White,
                         text = "Type"
                     )
 
@@ -288,6 +290,7 @@ fun GenerateAnswers(
                 Text(
                     modifier = Modifier
                         .fillMaxWidth(),
+                    color = Color.White,
                     text = "Habitat"
                 )
 
@@ -304,6 +307,7 @@ fun GenerateAnswers(
                 Text(
                     modifier = Modifier
                         .fillMaxWidth(),
+                    color = Color.White,
                     text = "Color"
                 )
 
@@ -320,6 +324,7 @@ fun GenerateAnswers(
                 Text(
                     modifier = Modifier
                         .fillMaxWidth(),
+                    color = Color.White,
                     text = "Evolved"
                 )
 
@@ -336,6 +341,7 @@ fun GenerateAnswers(
                 Text(
                     modifier = Modifier
                         .fillMaxWidth(),
+                    color = Color.White,
                     text = "Height"
                 )
 
@@ -353,6 +359,7 @@ fun GenerateAnswers(
                 Text(
                     modifier = Modifier
                         .fillMaxWidth(),
+                    color = Color.White,
                     text = "Width"
                 )
 
