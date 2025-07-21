@@ -320,7 +320,7 @@ fun GenerateAnswers(
                 Text(
                     modifier = Modifier
                         .fillMaxWidth(),
-                    text = "Is evolution"
+                    text = "Evolved"
                 )
 
                 FlippableCardContainer(
