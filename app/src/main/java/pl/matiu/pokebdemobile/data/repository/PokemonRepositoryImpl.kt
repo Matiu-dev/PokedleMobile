@@ -3,6 +3,7 @@ package pl.matiu.pokebdemobile.data.repository
 import android.util.Log
 import com.google.gson.Gson
 import org.koin.java.KoinJavaComponent.inject
+import pl.matiu.pokebdemobile.FlavorConfig
 import pl.matiu.pokebdemobile.data.api.PokeApi
 import pl.matiu.pokebdemobile.data.dto.PokemonDto
 import pl.matiu.pokebdemobile.data.dto.PokemonSpeciesDto
@@ -38,8 +39,23 @@ class PokemonRepositoryImpl: PokemonRepository {
 
     private suspend fun getPokemonData(pokemonName: String): PokemonModel {
 
+        var pokemonDataResponse = PokemonModel(id = 0)
+
+        if(FlavorConfig.isLocalServer) {
+            pokemonDataResponse = getDataFromInternalServer(pokemonName = pokemonName)
+        }
+
+        if(FlavorConfig.isExternalServer) {
+            getDataFromExternalServer(pokemonName = pokemonName, pokemonDataResponse = pokemonDataResponse)
+        }
+
+
+        return pokemonDataResponse
+    }
+
+    private suspend fun getDataFromExternalServer(pokemonName: String, pokemonDataResponse: PokemonModel) {
+
         val gson = Gson()
-        val pokemonDataResponse = PokemonModel(id = 0)
 
         val pokemonSpeciesDto = gson.fromJson(
             pokeApi.getPokemonSpeciesDataAsString(pokemonName = pokemonName),
@@ -50,8 +66,12 @@ class PokemonRepositoryImpl: PokemonRepository {
             pokeApi.getPokemonDataAsString(pokemonName = pokemonName),
             PokemonDto::class.java)
         pokemonDto.toPokemonModel(pokemonDataResponse = pokemonDataResponse)
+    }
 
-        return pokemonDataResponse
+    private suspend fun getDataFromInternalServer(pokemonName: String): PokemonModel {
+        return Gson().fromJson(
+            pokeApi.getPokemonSpeciesDataAsString(pokemonName = pokemonName),
+            PokemonModel::class.java)
     }
 
      private fun addPokemonToLocalStorage(pokemonModel: PokemonModel) {

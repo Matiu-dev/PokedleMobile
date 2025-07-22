@@ -1,3 +1,5 @@
+import org.codehaus.groovy.runtime.ArrayTypeUtils.dimension
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -28,7 +30,29 @@ android {
                 "proguard-rules.pro"
             )
         }
+
+        debug {
+            applicationIdSuffix = ".debug"
+            isDebuggable = true
+        }
     }
+
+    flavorDimensions += listOf("version")
+
+    productFlavors {
+        create("localServer") {
+            dimension = "version"
+            applicationIdSuffix = ".local"
+            versionNameSuffix = "-local"
+        }
+
+        create("externalServer") {
+            dimension = "version"
+            applicationIdSuffix = ".external"
+            versionNameSuffix = "-external"
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -38,6 +62,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
