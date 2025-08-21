@@ -19,7 +19,7 @@ class PokeApi {
         return HttpClient(CIO).get("https://pokeapi.co/api/v2/pokemon/${pokemonName}").body()
     }
 
-    suspend fun getPokemonModel(pokemonName: String): String {
+    suspend fun getPokemonModelFromInternalServer(pokemonName: String): String {
         return try {
             HttpClient(CIO).get {
                 url {

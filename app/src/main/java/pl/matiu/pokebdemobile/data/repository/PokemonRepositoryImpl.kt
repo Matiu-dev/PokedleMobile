@@ -70,7 +70,7 @@ class PokemonRepositoryImpl: PokemonRepository {
 
     private suspend fun getDataFromInternalServer(pokemonName: String): PokemonModel {
         return Gson().fromJson(
-            pokeApi.getPokemonSpeciesDataAsString(pokemonName = pokemonName),
+            pokeApi.getPokemonModelFromInternalServer(pokemonName = pokemonName),
             PokemonModel::class.java)
     }
 

@@ -44,12 +44,16 @@ android {
             dimension = "version"
             applicationIdSuffix = ".local"
             versionNameSuffix = "-local"
+            resValue("string", "app_name", "PokedleMobileLocal")
+            buildConfigField("String", "EVOLUTION_COLUMN", "\"fromEvolution\"")
         }
 
         create("externalServer") {
             dimension = "version"
             applicationIdSuffix = ".external"
             versionNameSuffix = "-external"
+            resValue("string", "app_name", "PokedleMobileExternal")
+            buildConfigField("String", "EVOLUTION_COLUMN", "\"isFromEvolution\"")
         }
     }
 
