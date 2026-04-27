@@ -360,7 +360,7 @@ fun GenerateAnswers(
                     modifier = Modifier
                         .fillMaxWidth(),
                     color = Color.White,
-                    text = "Width"
+                    text = "Weight"
                 )
 
                 FlippableCardContainer(
